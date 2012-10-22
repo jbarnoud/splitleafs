@@ -19,7 +19,6 @@ Write a GROMACS index file with one group per membrane leaflet.
 
 from __future__ import print_function, division
 import argparse
-import itertools
 import textwrap
 import sys
 
@@ -92,8 +91,25 @@ def split(atoms, average, axis):
     for atom in atoms:
         if atom[axis] >= average:
             groups["upper_leaflet"].append(atom["atomid"])
-        else :
+        else:
             groups["lower_leaflet"].append(atom["atomid"])
+    return groups
+
+
+def split_get_res(atoms, average, axis, atom_name):
+    groups = {"upper_leaflet": [], "lower_leaflet": []}
+    current_res = None
+    current_group = None
+    for atom in atoms:
+        if atom["atom_name"] == atom_name:
+            current_res = atom["resid"]
+            if atom[axis] >= average:
+                current_group = "upper_leaflet"
+            else:
+                current_group = "lower_leaflet"
+            groups[current_group].append(atom["atomid"])
+        if not current_res is None and atom["resid"] == current_res:
+            groups[current_group].append(atom["atomid"])
     return groups
 
 
@@ -107,17 +123,19 @@ def write_ndx(groups):
         print("\n".join(textwrap.wrap(group_str, 80)))
 
 
-def split_leaflets(lines, axis, atom_name):
+def split_leaflets(lines, axis, atom_name, res=False):
     """
     Split bilayer leaflets from a gromacs gro file along the given axis.
     """
     axis = axis.lower()
-    atoms = read_gro(lines)
-    selection = select_atom_name(atoms, atom_name)
-    selection_tee = itertools.tee(selection)
-    coordinates = axis_coordinates(selection_tee[0], axis)
+    atoms = list(read_gro(lines))
+    selection = list(select_atom_name(atoms, atom_name))
+    coordinates = axis_coordinates(selection, axis)
     average = mean(coordinates)
-    groups = split(selection_tee[1], average, axis)
+    if res:
+        groups = split_get_res(atoms, average, axis, atom_name)
+    else:
+        groups = split(selection, average, axis)
     write_ndx(groups)
     return groups
 
@@ -132,6 +150,12 @@ def get_options(argv):
                         help="Axis normal to the bilayer.")
     parser.add_argument("--atom", "-a", type=str, default="P1",
                         help="Reference atom name.")
+    parser.add_argument("--keep_residue", "-r", action="store_true",
+                        dest="keep_residue", default=False,
+                        help="Keep the whole residues.")
+    parser.add_argument("--keep_atom", "-k", action="store_false",
+                        dest="keep_residue", default=False,
+                        help="Keep only the atom of reference.")
     args = parser.parse_args(argv)
     return args
 
@@ -142,7 +166,7 @@ def main():
     """
     args = get_options(sys.argv[1:])
     lines = sys.stdin.readlines()[2:-1]
-    groups = split_leaflets(lines, args.axis, args.atom)
+    groups = split_leaflets(lines, args.axis, args.atom, args.keep_residue)
     for group_name, atomids in groups.iteritems():
         print("{0}: {1} atoms".format(group_name, len(atomids)),
               file=sys.stderr)

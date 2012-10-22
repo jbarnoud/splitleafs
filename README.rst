@@ -14,6 +14,8 @@ Options:
 
 --axis or -d: The axis normal to the membrane, z by default
 --atom or -a: The atom name of the reference, P1 by default
+--keep_residue or -r: Write the whole residues in the index file
+--keep_atom or -k: Write only the atoms of reference in the index file (default)
 
 Licence
 -------

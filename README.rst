@@ -1,5 +1,5 @@
-Splitleaf
-=========
+Splitleafs
+==========
 
 This tools aims to split leaflets from a bilayer. It reads a GROMACS gro file
 and print an index file with one group per leaflet.
@@ -12,10 +12,14 @@ Usage
 
 Options:
 
---axis or -d: The axis normal to the membrane, z by default
---atom or -a: The atom name of the reference, P1 by default
---keep_residue or -r: Write the whole residues in the index file
---keep_atom or -k: Write only the atoms of reference in the index file (default)
+--axis or -d:
+    The axis normal to the membrane, z by default
+--atom or -a:
+    The atom name of the reference, P1 by default
+--keep_residue or -r:
+    Write the whole residues in the index file
+--keep_atom or -k:
+    Write only the atoms of reference in the index file (default)
 
 Licence
 -------

@@ -1,0 +1,7 @@
+# python stuff
+*.py[cod]
+# vil stuff
+.*.sw[a-z]
+*.un~
+Session.vim
+.netrwhist

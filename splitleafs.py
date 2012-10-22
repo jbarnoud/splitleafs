@@ -23,6 +23,8 @@ import itertools
 import textwrap
 import sys
 
+__author__ = "Jonathan Barnoud"
+
 GRO_FIELDS = {
     "resid": ((0, 5), int),
     "resname": ((5, 10), str),

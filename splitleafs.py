@@ -162,7 +162,7 @@ def get_options(argv):
 
 def main():
     """
-    Run every thing from the command line.
+    Run everything from the command line.
     """
     args = get_options(sys.argv[1:])
     lines = sys.stdin.readlines()[2:-1]

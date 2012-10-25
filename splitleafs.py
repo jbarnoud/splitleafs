@@ -66,9 +66,12 @@ def read_gro(lines):
     gro file.
     """
     for line in lines:
-        atom = dict(((key, convert(line[begin:end].strip()))
-                    for key, ((begin, end), convert)
-                    in GRO_FIELDS.iteritems()))
+        try:
+            atom = dict(((key, convert(line[begin:end].strip()))
+                        for key, ((begin, end), convert)
+                        in GRO_FIELDS.iteritems()))
+        except ValueError:
+            raise FormatError
         yield atom
 
 

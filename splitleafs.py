@@ -19,6 +19,7 @@ Write a GROMACS index file with one group per membrane leaflet.
 
 from __future__ import print_function, division
 import argparse
+import itertools
 import textwrap
 import sys
 
@@ -185,7 +186,7 @@ def split_leaflets(infile, axis, atom_name, res=False, input_format="gro"):
     """
     axis = axis.lower()
     if input_format == "gro":
-        atoms = list(read_gro(infile.readlines()[2:-1]))
+        atoms = list(read_gro(list(infile)[2:-1]))
     else:
         atoms = list(read_pdb(infile))
     selection = list(select_atom_name(atoms, atom_name))
@@ -213,7 +214,7 @@ def get_options(argv):
     parser.add_argument("--atom", "-a", type=str, default="P1",
                         help="Reference atom name.")
     parser.add_argument("--format", "-f", type=str,
-                        default="gro", choices=["gro", "pdb"],
+                        default="gro", choices=["gro", "pdb", "auto"],
                         help="Input file format.")
     parser.add_argument("--keep_residue", "-r", action="store_true",
                         dest="keep_residue", default=False,
@@ -235,9 +236,23 @@ def main():
     else:
         infile = open(args.input)
     with infile:
+        # Guess the format
+        if args.format == "auto":
+            first_line = infile.readline()
+            if (first_line[0:6].strip() in PDB_SECTIONS
+                    or first_line[0:5] in ("MTRIX", "ORIGX", "SCALE")):
+                input_format = "pdb"
+            else:
+                input_format = "gro"
+            mod_infile = itertools.chain([first_line], infile)
+        else:
+            input_format = args.format
+            mod_infile = infile
+        # Do the work
         try:
-            groups = split_leaflets(infile, args.axis, args.atom,
-                                    args.keep_residue, args.format)
+            groups = split_leaflets(mod_infile, args.axis, args.atom,
+                                    args.keep_residue, input_format)
+        # Complain if the format is wrong
         except FormatError:
             print(("Error while reading the input. Are you sure your file is "
                    "in the {0} format?").format(args.format), file=sys.stderr)

@@ -98,17 +98,25 @@ def split(atoms, average, axis):
 
 def split_get_res(atoms, average, axis, atom_name):
     groups = {"upper_leaflet": [], "lower_leaflet": []}
-    current_res = None
+    keep_res = None
+    current_resid = None
+    current_res_atoms = []
     current_group = None
     for atom in atoms:
+        if atom["resid"] == current_resid:
+            current_res_atoms.append(atom["atomid"])
+        else:
+            current_resid = atom["resid"]
+            current_res_atoms = []
         if atom["atom_name"] == atom_name:
-            current_res = atom["resid"]
+            keep_res = atom["resid"]
             if atom[axis] >= average:
                 current_group = "upper_leaflet"
             else:
                 current_group = "lower_leaflet"
-            groups[current_group].append(atom["atomid"])
-        if not current_res is None and atom["resid"] == current_res:
+            groups[current_group] += current_res_atoms
+            #groups[current_group].append(atom["atomid"])
+        if not keep_res is None and atom["resid"] == keep_res:
             groups[current_group].append(atom["atomid"])
     return groups
 

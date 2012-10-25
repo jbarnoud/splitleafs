@@ -44,6 +44,19 @@ PDB_FIELDS = {
     "z": ((46, 54), float),
 }
 
+PDB_SECTIONS = (
+    "HEADER", "OBSLTE", "TITLE", "SPLT", "CAVEAT", "COMPND", "SOURCE",
+    "KEYWDS", "EXPDTA", "NUMMDL", "MDLTYP", "AUTHOR", "REVDAT", "SPRSDE",
+    "JRNL", "REMARK", "DBREF", "DBREF1", "DBREF2", "SEQADV", "SEQRES",
+    "MODRES", "HET", "FORMUL", "HETNAM", "HETSYN", "HELIX", "SHEET", "SSBOND",
+    "LINK", "CISPEP", "SITE", "CRYST1", "MTRIX", "ORIGX", "SCALE", "MODEL",
+    "ATOM", "ANISOU", "TER", "HETATM", "ENDMDL", "CONECT", "MASTER", "END",
+)
+
+
+class FormatError(Exception):
+    pass
+
 
 def read_gro(lines):
     """
@@ -67,6 +80,13 @@ def read_pdb(lines):
     gro file.
     """
     for line in lines:
+        # Test if the line starts as it should in a PDB file
+        if not (line[0:6].strip() in PDB_SECTIONS or line.strip() == ""):
+            # MTRIX, ORIGX and SCALE pdb sections can be followed be a random
+            # number so they will trigger the previous test
+            if not line[0:4] in ("MTRIX", "ORIGX", "SCALE"):
+                raise FormatError('PDB line should not start with "{0}"'
+                                  .format(line[0:6]))
         if line[0:6] == "ATOM  ":
             atom = dict(((key, convert(line[begin:end].strip()))
                         for key, ((begin, end), convert)
@@ -212,8 +232,13 @@ def main():
     else:
         infile = open(args.input)
     with infile:
-        groups = split_leaflets(infile, args.axis, args.atom,
-                                args.keep_residue, args.format)
+        try:
+            groups = split_leaflets(infile, args.axis, args.atom,
+                                    args.keep_residue, args.format)
+        except FormatError:
+            print(("Error while reading the input. Are you sure your file is "
+                   "in the {0} format?").format(args.format), file=sys.stderr)
+            sys.exit(1)
     for group_name, atomids in groups.iteritems():
         print("{0}: {1} atoms".format(group_name, len(atomids)),
               file=sys.stderr)

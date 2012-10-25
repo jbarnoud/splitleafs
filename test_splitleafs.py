@@ -59,6 +59,43 @@ class TestLibrary(TestCase):
                                             "instead of {2}")
                                            .format(key, atom[key], value))
 
+    def test_split_get_res(self):
+        """
+        Test if the group formed by the split_get_res function are consistent.
+        """
+        # Split the bilayer
+        path = os.path.join(REFDIR, "membrane.gro")
+        axis = "z"
+        atoms = list(splitleafs.read_gro(open(path).readlines()[2:-1]))
+        selection = list(splitleafs.select_atom_name(atoms, "P1"))
+        coordinates = splitleafs.axis_coordinates(selection, axis)
+        average = splitleafs.mean(coordinates)
+        groups = splitleafs.split_get_res(atoms, average, axis, "P1")
+
+        # Do the group have the right size?
+        natoms_popc = sum((1 for atom in atoms if atom["resname"] == "POPC"))
+        print("natom_popc: {0}".format(natoms_popc))
+        for key, value in groups.iteritems():
+            self.assertEqual(len(value) * 2, natoms_popc,
+                             ("The {0} group contains {1} atoms it should "
+                              "contain {2} ones.")
+                             .format(key, len(value), natoms_popc // 2))
+
+        # Is there doubles in the groups?
+        for key, value in groups.iteritems():
+            self.assertEqual(len(value), len(set(value)),
+                             "There is double values in the {0} group."
+                             .format(key))
+
+        # Is the group sorted? A group can not be sorted if the input file
+        # is not but the test input file is correctly sorted.
+        for key, value in groups.iteritems():
+            ordered = value[:]
+            ordered.sort()
+            self.assertEqual(value, ordered,
+                             "The {0} group is nor corectly ordered."
+                             .format(key))
+
 
 if __name__ == "__main__":
     main()

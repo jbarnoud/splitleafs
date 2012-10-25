@@ -56,6 +56,9 @@ PDB_SECTIONS = (
 
 
 class FormatError(Exception):
+    """
+    Exception raised when the file format is wrong.
+    """
     pass
 
 
@@ -146,6 +149,9 @@ def split(atoms, average, axis):
 
 
 def split_get_res(atoms, average, axis, atom_name):
+    """
+    Split the leaflets along the given axis and keep the whole residue.
+    """
     groups = {"upper_leaflet": [], "lower_leaflet": []}
     keep_res = None
     current_resid = None
@@ -226,6 +232,24 @@ def get_options(argv):
     return args
 
 
+def guess_format(infile):
+    """
+    Guess the format of the input file among gro and pdb.
+
+    Look if the file is a PDB one or assume it is a gro file.
+
+    Return the format and an iterator that mimic the input file.
+    """
+    first_line = infile.readline()
+    if (first_line[0:6].strip() in PDB_SECTIONS
+            or first_line[0:5] in ("MTRIX", "ORIGX", "SCALE")):
+        input_format = "pdb"
+    else:
+        input_format = "gro"
+    mod_infile = itertools.chain([first_line], infile)
+    return input_format, mod_infile
+
+
 def main():
     """
     Run everything from the command line.
@@ -238,13 +262,7 @@ def main():
     with infile:
         # Guess the format
         if args.format == "auto":
-            first_line = infile.readline()
-            if (first_line[0:6].strip() in PDB_SECTIONS
-                    or first_line[0:5] in ("MTRIX", "ORIGX", "SCALE")):
-                input_format = "pdb"
-            else:
-                input_format = "gro"
-            mod_infile = itertools.chain([first_line], infile)
+            input_format, mod_infile = guess_format(infile)
         else:
             input_format = args.format
             mod_infile = infile
@@ -257,6 +275,7 @@ def main():
             print(("Error while reading the input. Are you sure your file is "
                    "in the {0} format?").format(args.format), file=sys.stderr)
             sys.exit(1)
+    # Display the number of atoms per group
     for group_name, atomids in groups.iteritems():
         print("{0}: {1} atoms".format(group_name, len(atomids)),
               file=sys.stderr)

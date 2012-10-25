@@ -68,6 +68,14 @@ def read_gro(lines):
 
     This function create a generator that yield a dictionary per line of the
     gro file.
+
+    :Parameters:
+        - lines: an iterator over atom lines from the gro file. The two header
+                 lines and the bottom line describing the box have to be
+                 excluded.
+
+    :Raise:
+        - FormatError: raised if the file format does not fit.
     """
     for line in lines:
         try:
@@ -84,7 +92,13 @@ def read_pdb(lines):
     Read the atoms from a pdb file.
 
     This function create a generator that yield a dictionary per line of the
-    gro file.
+    pdb file.
+
+    :Parameters:
+        - lines: an iterator over the lines from the PDB file
+
+    :Raise:
+        - FormatError: raised if the file format does not fit.
     """
     for line in lines:
         # Test if the line starts as it should in a PDB file
@@ -95,9 +109,12 @@ def read_pdb(lines):
                 raise FormatError('PDB line should not start with "{0}"'
                                   .format(line[0:6]))
         if line[0:6] == "ATOM  ":
-            atom = dict(((key, convert(line[begin:end].strip()))
-                        for key, ((begin, end), convert)
-                        in PDB_FIELDS.iteritems()))
+            try:
+                atom = dict(((key, convert(line[begin:end].strip()))
+                            for key, ((begin, end), convert)
+                            in PDB_FIELDS.iteritems()))
+            except ValueError:
+                raise FormatError
             yield atom
 
 
@@ -107,6 +124,10 @@ def select_atom_name(atoms, atom_name):
 
     This function create a generator that yield the dictionary for the atoms
     with the given atom name.
+
+    :Parameters:
+        - atoms: an iterator over the atom dictionaries
+        - atom_name: the name of the atoms to keep
     """
     for atom in atoms:
         if atom["atom_name"] == atom_name:
@@ -118,6 +139,10 @@ def axis_coordinates(atoms, axis):
     Get the coordinate of the atom along the given axis.
 
     Create a generator on the atom coordinate along the axis of interest.
+
+    :Parameters:
+        - atoms:  an iterator over the atom dictionaries
+        - axis: the name of the dimension normal to the membrane (x, y or z)
     """
     for atom in atoms:
         yield atom[axis]
@@ -158,19 +183,32 @@ def split_get_res(atoms, average, axis, atom_name):
     current_res_atoms = []
     current_group = None
     for atom in atoms:
-        if atom["resid"] == current_resid:
-            current_res_atoms.append(atom["atomid"])
-        else:
+        # Keep track of the atoms of the residue, this is needed to have
+        # have in the groups the atoms of a residue of interest that have been
+        # read before the reference atom
+        if atom["resid"] != current_resid:
+            # We start a new residue
             current_resid = atom["resid"]
             current_res_atoms = []
+            # Always reset the keep_res variable when we change the residue.
+            # If we miss that we can catch extra residues because of the
+            # reseting of the residue number that happend when the resid become
+            # too big.
             keep_res = None
+        current_res_atoms.append(atom["atomid"])
+        # Split the residues of interest
         if atom["atom_name"] == atom_name:
             keep_res = atom["resid"]
+            # Choose the group
             if atom[axis] >= average:
                 current_group = "upper_leaflet"
             else:
                 current_group = "lower_leaflet"
-            groups[current_group] += current_res_atoms
+            # Add the atom of the residue that were read before the reference
+            # atom. Do not include the last atom of the list since it is the
+            # current atom and that he will be added to the group later.
+            groups[current_group] += current_res_atoms[:-1]
+        # Store the atom in the right group
         if not keep_res is None and atom["resid"] == keep_res:
             groups[current_group].append(atom["atomid"])
     return groups

@@ -180,8 +180,11 @@ def get_options(argv):
     """
     Read the command line arguments.
     """
-    usage = "%(prog)s [options] < input.gro > output.ndx"
+    usage = ("%(prog)s [options] < input > output.ndx\n"
+             "       %(prog)s [options] input > output.ndx")
     parser = argparse.ArgumentParser(description=__doc__, usage=usage)
+    parser.add_argument("input", default=None, nargs='?',
+                        help="The input structure.")
     parser.add_argument("--axis", "-d", choices="xyz", default="z",
                         help="Axis normal to the bilayer.")
     parser.add_argument("--atom", "-a", type=str, default="P1",
@@ -204,8 +207,13 @@ def main():
     Run everything from the command line.
     """
     args = get_options(sys.argv[1:])
-    groups = split_leaflets(sys.stdin, args.axis, args.atom, args.keep_residue,
-                            args.format)
+    if args.input is None:
+        infile = sys.stdin
+    else:
+        infile = open(args.input)
+    with infile:
+        groups = split_leaflets(infile, args.axis, args.atom,
+                                args.keep_residue, args.format)
     for group_name, atomids in groups.iteritems():
         print("{0}: {1} atoms".format(group_name, len(atomids)),
               file=sys.stderr)

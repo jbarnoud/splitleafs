@@ -8,18 +8,22 @@ Usage
 -----
 ::
 
-    splitleafs.py --axis z --atom P1 < input.gro > output.ndx
+    splitleafs.py --axis z --atom P1 < input > output.ndx
+    splitleafs.py --axis z --atom P1 input > output.ndx
 
 Options:
 
 --axis or -d:
-    The axis normal to the membrane, z by default
+    The axis normal to the membrane, ``z`` by default.
 --atom or -a:
-    The atom name of the reference, P1 by default
+    The atom name of the reference, ``P1`` by default.
 --keep_residue or -r:
-    Write the whole residues in the index file
+    Write the whole residues in the index file.
 --keep_atom or -k:
-    Write only the atoms of reference in the index file (default)
+    Write only the atoms of reference in the index file (default).
+-- format or -f:
+    The input file format. Gromacs gro files and PDB files are supported.
+    ``gro`` by default.
 
 Licence
 -------

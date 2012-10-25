@@ -34,6 +34,16 @@ GRO_FIELDS = {
     "z": ((36, 44), float),
 }
 
+PDB_FIELDS = {
+    "resid": ((22, 26), int),
+    "resname": ((18, 20), str),
+    "atom_name": ((12, 16), str),
+    "atomid": ((6, 11), int),
+    "x": ((30, 38), float),
+    "y": ((38, 46), float),
+    "z": ((46, 54), float),
+}
+
 
 def read_gro(lines):
     """
@@ -47,6 +57,21 @@ def read_gro(lines):
                     for key, ((begin, end), convert)
                     in GRO_FIELDS.iteritems()))
         yield atom
+
+
+def read_pdb(lines):
+    """
+    Read the atoms from a pdb file.
+
+    This function create a generator that yield a dictionary per line of the
+    gro file.
+    """
+    for line in lines:
+        if line[0:6] == "ATOM  ":
+            atom = dict(((key, convert(line[begin:end].strip()))
+                        for key, ((begin, end), convert)
+                        in PDB_FIELDS.iteritems()))
+            yield atom
 
 
 def select_atom_name(atoms, atom_name):
@@ -108,6 +133,7 @@ def split_get_res(atoms, average, axis, atom_name):
         else:
             current_resid = atom["resid"]
             current_res_atoms = []
+            keep_res = None
         if atom["atom_name"] == atom_name:
             keep_res = atom["resid"]
             if atom[axis] >= average:
@@ -115,7 +141,6 @@ def split_get_res(atoms, average, axis, atom_name):
             else:
                 current_group = "lower_leaflet"
             groups[current_group] += current_res_atoms
-            #groups[current_group].append(atom["atomid"])
         if not keep_res is None and atom["resid"] == keep_res:
             groups[current_group].append(atom["atomid"])
     return groups
@@ -131,12 +156,15 @@ def write_ndx(groups):
         print("\n".join(textwrap.wrap(group_str, 80)))
 
 
-def split_leaflets(lines, axis, atom_name, res=False):
+def split_leaflets(infile, axis, atom_name, res=False, input_format="gro"):
     """
     Split bilayer leaflets from a gromacs gro file along the given axis.
     """
     axis = axis.lower()
-    atoms = list(read_gro(lines))
+    if input_format == "gro":
+        atoms = list(read_gro(infile.readlines()[2:-1]))
+    else:
+        atoms = list(read_pdb(infile))
     selection = list(select_atom_name(atoms, atom_name))
     coordinates = axis_coordinates(selection, axis)
     average = mean(coordinates)
@@ -158,6 +186,9 @@ def get_options(argv):
                         help="Axis normal to the bilayer.")
     parser.add_argument("--atom", "-a", type=str, default="P1",
                         help="Reference atom name.")
+    parser.add_argument("--format", "-f", type=str,
+                        default="gro", choices=["gro", "pdb"],
+                        help="Input file format.")
     parser.add_argument("--keep_residue", "-r", action="store_true",
                         dest="keep_residue", default=False,
                         help="Keep the whole residues.")
@@ -173,8 +204,8 @@ def main():
     Run everything from the command line.
     """
     args = get_options(sys.argv[1:])
-    lines = sys.stdin.readlines()[2:-1]
-    groups = split_leaflets(lines, args.axis, args.atom, args.keep_residue)
+    groups = split_leaflets(sys.stdin, args.axis, args.atom, args.keep_residue,
+                            args.format)
     for group_name, atomids in groups.iteritems():
         print("{0}: {1} atoms".format(group_name, len(atomids)),
               file=sys.stderr)

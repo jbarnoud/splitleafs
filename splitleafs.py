@@ -220,7 +220,7 @@ def get_options(argv):
     parser.add_argument("--atom", "-a", type=str, default="P1",
                         help="Reference atom name.")
     parser.add_argument("--format", "-f", type=str,
-                        default="gro", choices=["gro", "pdb", "auto"],
+                        default="auto", choices=["gro", "pdb", "auto"],
                         help="Input file format.")
     parser.add_argument("--keep_residue", "-r", action="store_true",
                         dest="keep_residue", default=False,

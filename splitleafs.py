@@ -275,6 +275,12 @@ def main():
             print(("Error while reading the input. Are you sure your file is "
                    "in the {0} format?").format(args.format), file=sys.stderr)
             sys.exit(1)
+        # Complain if the reference atom is absent
+        except ZeroDivisionError:
+            print(("The reference atom looks abent from your input. Are you "
+                   "sure there is some {0} atoms in your system?")
+                  .format(args.atom), file=sys.stderr)
+            sys.exit(1)
     # Display the number of atoms per group
     for group_name, atomids in groups.iteritems():
         print("{0}: {1} atoms".format(group_name, len(atomids)),

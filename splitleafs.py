@@ -65,8 +65,11 @@ class FormatError(Exception):
 
 
 def isfile(path):
-    """Check if path is an existing file.
-    If not, raise an error. Else, return the path."""
+    """
+    Check if path is an existing file.
+
+    If not, raise an error. Else, return the path.
+    """
     if not os.path.isfile(path):
         if os.path.isdir(path):
             msg = "{0} is a directory".format(path)

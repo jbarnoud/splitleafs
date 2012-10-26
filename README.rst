@@ -52,7 +52,7 @@ split in two leaflets. Here we assume that ``membrane.pdb`` describe a
 phospholipid and that ``P1`` is the name of the phosphorus.
 
 If your system is different you can change the reference atom using the
-``--atom`` option. Let's assume we ha a phospholipid bilayer described within
+``--atom`` option. Let's assume we have a phospholipid bilayer described within
 the `Martini coarse-grained force field <http://md.chem.rug.nl/cgmartini/>`_.
 Then the phospate group is represented by a bead called ``PO4``. If we want to
 use this bead as a reference for our splitting we can use the command ::
@@ -62,8 +62,8 @@ use this bead as a reference for our splitting we can use the command ::
 Notice that, in this last example, we give a gro file to the program which will
 guess it is not a PDB file and read it with the right file format.
 
-You may need not only the phosphorus but also the whole lipid. Then use the
-``--keep_residue`` option ::
+You may need not only the phosphorus but also the whole lipid in the output
+index file. Then use the ``--keep_residue`` option ::
 
     splitleafs.py --atom PO4 membrane_martini.gro --keep_residue > leaflets.ndx
 

@@ -310,8 +310,12 @@ def main():
                                     args.keep_residue, input_format)
         # Complain if the format is wrong
         except FormatError:
-            print(("Error while reading the input. Are you sure your file is "
-                   "in the {0} format?").format(args.format), file=sys.stderr)
+            if (args.format == "auto"):
+                print("Error while reading the input. Are you sure your file is "
+                      "in the pdb/gro format?", file=sys.stderr)
+            else:
+                print(("Error while reading the input. Are you sure your file is "
+                       "in the {0} format?").format(args.format), file=sys.stderr)
             sys.exit(1)
         # Complain if the reference atom is absent
         except ZeroDivisionError:

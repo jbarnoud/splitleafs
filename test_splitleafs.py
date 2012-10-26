@@ -96,6 +96,46 @@ class TestLibrary(TestCase):
                              "The {0} group is nor corectly ordered."
                              .format(key))
 
+        # Are the groups the same as the reference?
+        ndx_reference = os.path.join(REFDIR, "leafs.ndx")
+        with open(ndx_reference) as infile:
+            reference = read_ndx(infile)
+        for key, value in reference.iteritems():
+            self.assertEqual(value, groups[key],
+                             ("The {0} group is different between the "
+                              "function output and the reference.")
+                             .format(key))
+
+
+def read_ndx(infile):
+    """
+    Read a GROMACS index file and return a dictionary.
+
+    :Parameters:
+        - infile : a file descriptor like instance of a ndx file
+
+    :Return:
+        - A dictionary like {group name : list of indices}.
+    """
+    indices = {}
+    current_group = None
+    groups = []
+    for line in infile:
+        # Remove comments if any
+        comment_start = line.find(";")
+        if comment_start > -1:
+            line = line[:comment_start]
+        if "[" in line:
+            current_group = line
+            current_group = current_group.replace("[", "")
+            current_group = current_group.replace("]", "")
+            current_group = current_group.strip()
+            groups.append(current_group)
+            indices[current_group] = []
+        elif not current_group is None:
+            indices[current_group] += [int(i) for i in line.split()]
+    return indices
+
 
 if __name__ == "__main__":
     main()

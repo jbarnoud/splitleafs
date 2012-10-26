@@ -68,9 +68,9 @@ index file. Then use the ``--keep_residue`` option ::
     splitleafs.py --atom PO4 membrane_martini.gro --keep_residue > leaflets.ndx
 
 In the current version, only the residue that contains the reference atom is
-selected. This means that your molecules are composed of more than one residue,
-the other will be ignored. Most lipid representation use only one residue per
-lipid so this issue should not be a concern.
+selected. This means that if your molecules are composed of more than one
+residue, the others will be ignored. Most lipid representation use only one
+residue per lipid so this issue should not be a concern.
 
 Licence
 -------

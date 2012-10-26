@@ -22,6 +22,7 @@ import argparse
 import itertools
 import textwrap
 import sys
+import os
 
 __author__ = "Jonathan Barnoud"
 
@@ -52,6 +53,7 @@ PDB_SECTIONS = (
     "MODRES", "HET", "FORMUL", "HETNAM", "HETSYN", "HELIX", "SHEET", "SSBOND",
     "LINK", "CISPEP", "SITE", "CRYST1", "MTRIX", "ORIGX", "SCALE", "MODEL",
     "ATOM", "ANISOU", "TER", "HETATM", "ENDMDL", "CONECT", "MASTER", "END",
+    "ENDMOL",
 )
 
 
@@ -61,6 +63,16 @@ class FormatError(Exception):
     """
     pass
 
+def isfile(path):
+    """Check if path is an existing file.
+    If not, raise an error. Else, return the path."""
+    if not os.path.isfile(path):
+        if os.path.isdir(path):
+            msg = "{0} is a directory".format(path)
+        else:
+            msg = "{0} does not exist.".format(path)
+        raise argparse.ArgumentTypeError(msg)
+    return path
 
 def read_gro(lines):
     """
@@ -251,7 +263,7 @@ def get_options(argv):
     usage = ("%(prog)s [options] < input > output.ndx\n"
              "       %(prog)s [options] input > output.ndx")
     parser = argparse.ArgumentParser(description=__doc__, usage=usage)
-    parser.add_argument("input", default=None, nargs='?',
+    parser.add_argument("input", default=None, nargs='?', type=isfile, 
                         help="The input structure.")
     parser.add_argument("--axis", "-d", choices="xyz", default="z",
                         help="Axis normal to the bilayer.")
@@ -310,8 +322,12 @@ def main():
                                     args.keep_residue, input_format)
         # Complain if the format is wrong
         except FormatError:
-            print(("Error while reading the input. Are you sure your file is "
-                   "in the {0} format?").format(args.format), file=sys.stderr)
+            if (args.format == "auto"):
+                print("Error while reading the input. Are you sure your file is "
+                      "in the pdb/gro format?", file=sys.stderr)
+            else:
+                print(("Error while reading the input. Are you sure your file is "
+                       "in the {0} format?").format(args.format), file=sys.stderr)
             sys.exit(1)
         # Complain if the reference atom is absent
         except ZeroDivisionError:

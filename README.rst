@@ -72,6 +72,16 @@ selected. This means that if your molecules are composed of more than one
 residue, the others will be ignored. Most lipid representation use only one
 residue per lipid so this issue should not be a concern.
 
+You might want to know how many atoms were selected in each leaflet. This is
+conveniant to quickly check the result of the program or to knox if a membrane
+is symmetric. These informations are writen on the standard error stream so you
+can see them even if you redirect the output of the program in a file ::
+
+    lower_leaflet: 144 atoms
+    upper_leaflet: 144 atoms
+    The membrane is symmetric.
+
+
 Licence
 -------
 

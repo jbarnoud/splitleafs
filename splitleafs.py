@@ -1,4 +1,4 @@
-#!usr/bin/env python
+#!/usr/bin/env python
 
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -315,7 +315,7 @@ def main():
             sys.exit(1)
         # Complain if the reference atom is absent
         except ZeroDivisionError:
-            print(("The reference atom looks abent from your input. Are you "
+            print(("The reference atom looks absent from your input. Are you "
                    "sure there is some {0} atoms in your system?")
                   .format(args.atom), file=sys.stderr)
             sys.exit(1)
@@ -323,6 +323,8 @@ def main():
     for group_name, atomids in groups.iteritems():
         print("{0}: {1} atoms".format(group_name, len(atomids)),
               file=sys.stderr)
+    if len(groups["upper_leaflet"]) == len(groups["lower_leaflet"]):
+        print("The membrane is symmetric.", file=sys.stderr)
 
 if __name__ == "__main__":
     main()

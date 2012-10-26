@@ -63,6 +63,7 @@ class FormatError(Exception):
     """
     pass
 
+
 def isfile(path):
     """Check if path is an existing file.
     If not, raise an error. Else, return the path."""
@@ -73,6 +74,7 @@ def isfile(path):
             msg = "{0} does not exist.".format(path)
         raise argparse.ArgumentTypeError(msg)
     return path
+
 
 def read_gro(lines):
     """
@@ -263,7 +265,7 @@ def get_options(argv):
     usage = ("%(prog)s [options] < input > output.ndx\n"
              "       %(prog)s [options] input > output.ndx")
     parser = argparse.ArgumentParser(description=__doc__, usage=usage)
-    parser.add_argument("input", default=None, nargs='?', type=isfile, 
+    parser.add_argument("input", default=None, nargs='?', type=isfile,
                         help="The input structure.")
     parser.add_argument("--axis", "-d", choices="xyz", default="z",
                         help="Axis normal to the bilayer.")
@@ -323,11 +325,12 @@ def main():
         # Complain if the format is wrong
         except FormatError:
             if (args.format == "auto"):
-                print("Error while reading the input. Are you sure your file is "
-                      "in the pdb/gro format?", file=sys.stderr)
+                print("Error while reading the input. Are you sure your file "
+                      "is in the pdb/gro format?", file=sys.stderr)
             else:
-                print(("Error while reading the input. Are you sure your file is "
-                       "in the {0} format?").format(args.format), file=sys.stderr)
+                print(("Error while reading the input. Are you sure your file "
+                       "is in the {0} format?").format(args.format),
+                      file=sys.stderr)
             sys.exit(1)
         # Complain if the reference atom is absent
         except ZeroDivisionError:

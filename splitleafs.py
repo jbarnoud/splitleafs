@@ -22,6 +22,7 @@ import argparse
 import itertools
 import textwrap
 import sys
+import os
 
 __author__ = "Jonathan Barnoud"
 
@@ -61,6 +62,16 @@ class FormatError(Exception):
     """
     pass
 
+def isfile(path):
+    """Check if path is an existing file.
+    If not, raise an error. Else, return the path."""
+    if not os.path.isfile(path):
+        if os.path.isdir(path):
+            msg = "{0} is a directory".format(path)
+        else:
+            msg = "{0} does not exist.".format(path)
+        raise argparse.ArgumentTypeError(msg)
+    return path
 
 def read_gro(lines):
     """
@@ -251,7 +262,7 @@ def get_options(argv):
     usage = ("%(prog)s [options] < input > output.ndx\n"
              "       %(prog)s [options] input > output.ndx")
     parser = argparse.ArgumentParser(description=__doc__, usage=usage)
-    parser.add_argument("input", default=None, nargs='?',
+    parser.add_argument("input", default=None, nargs='?', type=isfile, 
                         help="The input structure.")
     parser.add_argument("--axis", "-d", choices="xyz", default="z",
                         help="Axis normal to the bilayer.")

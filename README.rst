@@ -82,7 +82,7 @@ can see them even if you redirect the output of the program in a file ::
     The membrane is symmetric.
 
 
-Licence
+License
 -------
 
 This program is free software: you can redistribute it and/or modify  

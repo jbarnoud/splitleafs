@@ -20,9 +20,11 @@ format. The format is guessed from the content of the file Use the
 The program writes a gromacs index file (.ndx file) on the standard output. The
 index file will contain two groups called ``lower_leaflet`` and
 ``upper_leaflet`` respectively. The groups contain the index of the reference
-atoms in each leaflets (if the ``--keep_atom`` oprion is used, default) or
+atoms in each leaflets (if the ``--keep_atom`` option is used, default) or
 the index of all the atoms from reference atom residues (if the
 ``--keep_residue`` is used).
+
+Splitleafs has been tested with both python 2.7 and python 3.2.
 
 Options
 ~~~~~~~
@@ -73,8 +75,8 @@ residue, the others will be ignored. Most lipid representation use only one
 residue per lipid so this issue should not be a concern.
 
 You might want to know how many atoms were selected in each leaflet. This is
-conveniant to quickly check the result of the program or to knox if a membrane
-is symmetric. These informations are writen on the standard error stream so you
+convenient to quickly check the result of the program or to know if a membrane
+is symmetric. These informations are written on the standard error stream so you
 can see them even if you redirect the output of the program in a file ::
 
     lower_leaflet: 144 atoms

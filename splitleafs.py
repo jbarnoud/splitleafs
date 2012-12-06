@@ -313,7 +313,12 @@ def main():
     if args.input is None:
         infile = sys.stdin
     else:
-        infile = open(args.input)
+        try:
+            infile = open(args.input)
+        except IOError, error:
+            print("Error while oppening file {0}".format(error.filename),
+                  file=sys.stderr)
+            return 1
     with infile:
         # Guess the format
         if args.format == "auto":

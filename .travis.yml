@@ -9,7 +9,7 @@ python:
   - "pypy"
 # command to install dependencies
 install:
-  - pip install . --use-mirrors
+  #- pip install . --use-mirrors
   - pip install -r requirements.txt --use-mirrors
 # command to run tests
 script: nosetests 

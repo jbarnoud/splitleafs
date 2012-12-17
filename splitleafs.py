@@ -17,7 +17,7 @@
 Write a GROMACS index file with one group per membrane leaflet.
 """
 
-from __future__ import print_function, division
+from __future__ import print_function, division, with_statement
 import argparse
 import itertools
 import textwrap

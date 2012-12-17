@@ -315,7 +315,7 @@ def main():
     else:
         try:
             infile = open(args.input)
-        except IOError, error:
+        except IOError as error:
             print("Error while oppening file {0}".format(error.filename),
                   file=sys.stderr)
             return 1

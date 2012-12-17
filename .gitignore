@@ -1,7 +1,9 @@
 # python stuff
 *.py[cod]
-# vil stuff
+# vim stuff
 .*.sw[a-z]
 *.un~
 Session.vim
 .netrwhist
+# splitleafs stuff
+test_output.ndx

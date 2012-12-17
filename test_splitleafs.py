@@ -20,6 +20,7 @@ Test suite for splitleafs.
 from unittest import TestCase, main
 import os
 import splitleafs
+import subprocess
 
 __author__ = "Jonathan Barnoud"
 
@@ -93,7 +94,7 @@ class TestLibrary(TestCase):
             ordered = value[:]
             ordered.sort()
             self.assertEqual(value, ordered,
-                             "The {0} group is nor corectly ordered."
+                             "The {0} group is nor correctly ordered."
                              .format(key))
 
         # Are the groups the same as the reference?
@@ -105,6 +106,21 @@ class TestLibrary(TestCase):
                              ("The {0} group is different between the "
                               "function output and the reference.")
                              .format(key))
+
+class TestProgram(TestCase):
+    """
+    Test that the program run correctly.
+    """
+    def test_run(self):
+        """
+        Launch the program.
+        """
+        with open("test_output.ndx", "w") as out:
+            status = subprocess.call(["./splitleafs.py",
+                                      "test_resources/membrane.gro", "-r"],
+                                     stdout=out)
+        self.assertEqual(status, 0, "Error while calling the program.")
+
 
 
 def read_ndx(infile):

@@ -48,7 +48,7 @@ class TestLibrary(TestCase):
         with open(path) as infile:
             atoms = splitleafs.read_gro(infile.readlines()[2:-1])
         for ref, atom in zip(reference, atoms):
-            for key, value in ref.iteritems():
+            for key, value in ref.items():
                 if not key in "xyz":
                     self.assertEqual(value, atom[key],
                                      ("Different value for key {0}: {1} "
@@ -76,21 +76,21 @@ class TestLibrary(TestCase):
         # Do the group have the right size?
         natoms_popc = sum((1 for atom in atoms if atom["resname"] == "POPC"))
         print("natom_popc: {0}".format(natoms_popc))
-        for key, value in groups.iteritems():
+        for key, value in groups.items():
             self.assertEqual(len(value) * 2, natoms_popc,
                              ("The {0} group contains {1} atoms it should "
                               "contain {2} ones.")
                              .format(key, len(value), natoms_popc // 2))
 
         # Is there doubles in the groups?
-        for key, value in groups.iteritems():
+        for key, value in groups.items():
             self.assertEqual(len(value), len(set(value)),
                              "There is double values in the {0} group."
                              .format(key))
 
         # Is the group sorted? A group can not be sorted if the input file
         # is not but the test input file is correctly sorted.
-        for key, value in groups.iteritems():
+        for key, value in groups.items():
             ordered = value[:]
             ordered.sort()
             self.assertEqual(value, ordered,
@@ -101,7 +101,7 @@ class TestLibrary(TestCase):
         ndx_reference = os.path.join(REFDIR, "leafs.ndx")
         with open(ndx_reference) as infile:
             reference = read_ndx(infile)
-        for key, value in reference.iteritems():
+        for key, value in reference.items():
             self.assertEqual(value, groups[key],
                              ("The {0} group is different between the "
                               "function output and the reference.")

@@ -37,7 +37,7 @@ Options
     Write the whole residues in the index file.
 --keep_atom or -k:
     Write only the atoms of reference in the index file (default).
--- format or -f:
+--format or -f:
     The input file format. Gromacs gro files and PDB files are supported.
     If ``auto`` is selected, then the file format is guessed from the input
     content. ``auto`` by default.

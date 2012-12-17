@@ -120,7 +120,22 @@ class TestProgram(TestCase):
                                       "test_resources/membrane.gro", "-r"],
                                      stdout=out)
         self.assertEqual(status, 0, "Error while calling the program.")
+        ndx_reference = os.path.join(REFDIR, "leafs.ndx")
+        with open(ndx_reference) as infile:
+            reference = read_ndx(infile)
+        with open("test_output.ndx") as infile:
+            groups = read_ndx(infile)
+        self.assertEqual(reference, groups, "Program output is wrong.")
 
+    def test_fail_run(self):
+        """
+        Test that the test suit actually catch crashes.
+        """
+        with open("test_output.ndx", "w") as out:
+            status = subprocess.call(["./splitleafs.py",
+                                      "test_resources/non-existing.gro", "-r"],
+                                     stdout=out)
+        self.assertNotEqual(status, 0, "The program should have crash.")
 
 
 def read_ndx(infile):

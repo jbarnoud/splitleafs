@@ -38,7 +38,7 @@ GRO_FIELDS = {
 
 PDB_FIELDS = {
     "resid": ((22, 26), int),
-    "resname": ((18, 20), str),
+    "resname": ((17, 20), str),
     "atom_name": ((12, 16), str),
     "atomid": ((6, 11), int),
     "x": ((30, 38), float),

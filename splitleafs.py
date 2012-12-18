@@ -163,22 +163,6 @@ def read_pdb(lines):
             yield atom
 
 
-def select_atom_name(atoms, atom_name):
-    """
-    Select only the atoms with the given atom name.
-
-    This function create a generator that yield the dictionary for the atoms
-    with the given atom name.
-
-    :Parameters:
-        - atoms: an iterator over the atom dictionaries
-        - atom_name: the name of the atoms to keep
-    """
-    for atom in atoms:
-        if atom["atom_name"] == atom_name:
-            yield atom
-
-
 def is_selected(atom, selection):
     """
     Return True is the atom fit the selection criteria.

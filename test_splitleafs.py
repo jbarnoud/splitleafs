@@ -69,7 +69,7 @@ class TestLibrary(TestCase):
         path = os.path.join(REFDIR, "membrane.gro")
         axis = "z"
         atoms = list(splitleafs.read_gro(open(path).readlines()[2:-1]))
-        selection = list(splitleafs.select_atom_name(atoms, "P1"))
+        selection = list(splitleafs.select_atoms(atoms, [("P1",)]))
         coordinates = splitleafs.axis_coordinates(selection, axis)
         average = splitleafs.mean(coordinates)
         groups = splitleafs.split_get_res(atoms, average, axis, [("P1",)])

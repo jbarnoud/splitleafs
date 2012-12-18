@@ -113,9 +113,9 @@ class TestProgram(TestCase):
     """
     Test that the program run correctly.
     """
-    def test_run(self):
+    def test_run_residue(self):
         """
-        Launch the program.
+        Launch the program and keep residues.
         """
         with open("test_output.ndx", "w") as out:
             with open("test_error.txt", "w") as err:
@@ -127,6 +127,26 @@ class TestProgram(TestCase):
                 print(line)
         self.assertEqual(status, 0, "Error while calling the program.")
         ndx_reference = os.path.join(REFDIR, "leafs.ndx")
+        with open(ndx_reference) as infile:
+            reference = read_ndx(infile)
+        with open("test_output.ndx") as infile:
+            groups = read_ndx(infile)
+        self.assertEqual(reference, groups, "Program output is wrong.")
+
+    def test_run_no_residue(self):
+        """
+        Launch the program and do not keep residues.
+        """
+        with open("test_output.ndx", "w") as out:
+            with open("test_error.txt", "w") as err:
+                status = subprocess.call(["./splitleafs.py",
+                                          "test_resources/membrane.gro"],
+                                         stdout=out, stderr=err)
+        with open("test_error.txt") as err:
+            for line in err:
+                print(line)
+        self.assertEqual(status, 0, "Error while calling the program.")
+        ndx_reference = os.path.join(REFDIR, "leafsP1.ndx")
         with open(ndx_reference) as infile:
             reference = read_ndx(infile)
         with open("test_output.ndx") as infile:

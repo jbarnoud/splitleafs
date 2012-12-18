@@ -22,7 +22,6 @@ from unittest import TestCase, main
 import os
 import splitleafs
 import subprocess
-import sys
 
 __author__ = "Jonathan Barnoud"
 
@@ -108,6 +107,7 @@ class TestLibrary(TestCase):
                              ("The {0} group is different between the "
                               "function output and the reference.")
                              .format(key))
+
 
 class TestProgram(TestCase):
     """

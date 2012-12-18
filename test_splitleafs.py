@@ -17,10 +17,12 @@
 Test suite for splitleafs.
 """
 
+from __future__ import print_function
 from unittest import TestCase, main
 import os
 import splitleafs
 import subprocess
+import sys
 
 __author__ = "Jonathan Barnoud"
 
@@ -116,9 +118,13 @@ class TestProgram(TestCase):
         Launch the program.
         """
         with open("test_output.ndx", "w") as out:
-            status = subprocess.call(["./splitleafs.py",
-                                      "test_resources/membrane.gro", "-r"],
-                                     stdout=out)
+            with open("test_error.txt", "w") as err:
+                status = subprocess.call(["./splitleafs.py",
+                                          "test_resources/membrane.gro", "-r"],
+                                         stdout=out, stderr=err)
+        with open("test_error.txt") as err:
+            for line in err:
+                print(err)
         self.assertEqual(status, 0, "Error while calling the program.")
         ndx_reference = os.path.join(REFDIR, "leafs.ndx")
         with open(ndx_reference) as infile:
@@ -132,9 +138,13 @@ class TestProgram(TestCase):
         Test that the test suit actually catch crashes.
         """
         with open("test_output.ndx", "w") as out:
-            status = subprocess.call(["./splitleafs.py",
-                                      "test_resources/non-existing.gro", "-r"],
-                                     stdout=out)
+            with open("test_error.txt", "w") as err:
+                status = subprocess.call(["./splitleafs.py",
+                                          "test_resources/non-existing.gro",
+                                          "-r"], stdout=out, stderr=err)
+        with open("test_error.txt") as err:
+            for line in err:
+                print(err)
         self.assertNotEqual(status, 0, "The program should have crash.")
 
 

@@ -72,7 +72,7 @@ class TestLibrary(TestCase):
         selection = list(splitleafs.select_atom_name(atoms, "P1"))
         coordinates = splitleafs.axis_coordinates(selection, axis)
         average = splitleafs.mean(coordinates)
-        groups = splitleafs.split_get_res(atoms, average, axis, "P1")
+        groups = splitleafs.split_get_res(atoms, average, axis, [("P1",)])
 
         # Do the group have the right size?
         natoms_popc = sum((1 for atom in atoms if atom["resname"] == "POPC"))
@@ -124,7 +124,7 @@ class TestProgram(TestCase):
                                          stdout=out, stderr=err)
         with open("test_error.txt") as err:
             for line in err:
-                print(err)
+                print(line)
         self.assertEqual(status, 0, "Error while calling the program.")
         ndx_reference = os.path.join(REFDIR, "leafs.ndx")
         with open(ndx_reference) as infile:
@@ -144,7 +144,7 @@ class TestProgram(TestCase):
                                           "-r"], stdout=out, stderr=err)
         with open("test_error.txt") as err:
             for line in err:
-                print(err)
+                print(line)
         self.assertNotEqual(status, 0, "The program should have crash.")
 
 

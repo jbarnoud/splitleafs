@@ -79,6 +79,34 @@ def isfile(path):
     return path
 
 
+def parse_selection(selection):
+    """
+    Read the atom selection given in argument
+
+    The atom selection is formatted as follow:
+
+    ::
+        POPC:PO4 DUPC:PO4 CHOL:ROH
+
+    Each string separated by a space represents one atom type, before the
+    column is the residue name, after it is the atom name. The residue name can
+    be omitted, then the column is omitted too:
+
+    ::
+        PO4 CHOL:ROH
+
+    The final output is a list of tuples. The each tuple represents an atom
+    type, the first element of the tuple is the residue name, the second
+    element is the atom name. When the residue name is omitted then the tuple
+    counts only one element: the atom name.
+
+    Because the function is called from argparse the split on spaces is already
+    done before entering the function, so here we only deal with one single
+    atom type.
+    """
+    return tuple(selection.split(':'))
+
+
 def read_gro(lines):
     """
     Read the atoms from a gro file.
@@ -151,6 +179,36 @@ def select_atom_name(atoms, atom_name):
             yield atom
 
 
+def is_selected(atom, selection):
+    """
+    Return True is the atom fit the selection criteria.
+    """
+    for atom_type in selection:
+        if len(atom_type) == 1 and atom["atom_name"] == atom_type[0]:
+            return True
+        if (atom["resname"] == atom_type[0] and
+                atom["atom_name"] == atom_type[1]):
+            return True
+    return False
+
+
+def select_atoms(atoms, selection):
+    """
+    Select only the atoms with the given atom name and residue name.
+
+    This function create a generator that yield the dictionary for the atoms
+    with the given atom name and residue name.
+
+    :Parameters:
+        - atoms: an iterator over the atom dictionaries
+        - selection: an atom selection as described in ``parse_selection``
+    """
+    for atom in atoms:
+        for atom_type in selection:
+            if is_selected(atom, selection):
+                yield atom
+
+
 def axis_coordinates(atoms, axis):
     """
     Get the coordinate of the atom along the given axis.
@@ -190,7 +248,7 @@ def split(atoms, average, axis):
     return groups
 
 
-def split_get_res(atoms, average, axis, atom_name):
+def split_get_res(atoms, average, axis, selection):
     """
     Split the leaflets along the given axis and keep the whole residue.
     """
@@ -214,7 +272,7 @@ def split_get_res(atoms, average, axis, atom_name):
             keep_res = None
         current_res_atoms.append(atom["atomid"])
         # Split the residues of interest
-        if atom["atom_name"] == atom_name:
+        if is_selected(atom, selection):
             keep_res = atom["resid"]
             # Choose the group
             if atom[axis] >= average:
@@ -241,7 +299,7 @@ def write_ndx(groups):
         print("\n".join(textwrap.wrap(group_str, 80)))
 
 
-def split_leaflets(infile, axis, atom_name, res=False, input_format="gro"):
+def split_leaflets(infile, axis, selection, res=False, input_format="gro"):
     """
     Split bilayer leaflets from a gromacs gro file along the given axis.
     """
@@ -250,13 +308,14 @@ def split_leaflets(infile, axis, atom_name, res=False, input_format="gro"):
         atoms = list(read_gro(list(infile)[2:-1]))
     else:
         atoms = list(read_pdb(infile))
-    selection = list(select_atom_name(atoms, atom_name))
-    coordinates = axis_coordinates(selection, axis)
+    selected = list(select_atoms(atoms, selection))
+    print(len(selected))
+    coordinates = axis_coordinates(selected, axis)
     average = mean(coordinates)
     if res:
-        groups = split_get_res(atoms, average, axis, atom_name)
+        groups = split_get_res(atoms, average, axis, selection)
     else:
-        groups = split(selection, average, axis)
+        groups = split(selected, average, axis)
     write_ndx(groups)
     return groups
 
@@ -272,7 +331,8 @@ def get_options(argv):
                         help="The input structure.")
     parser.add_argument("--axis", "-d", choices="xyz", default="z",
                         help="Axis normal to the bilayer.")
-    parser.add_argument("--atom", "-a", type=str, default="P1",
+    parser.add_argument("--atom", "-a", type=parse_selection,
+                        default=[("P1",)], nargs='+',
                         help="Reference atom name.")
     parser.add_argument("--format", "-f", type=str,
                         default="auto", choices=["gro", "pdb", "auto"],

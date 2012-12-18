@@ -28,7 +28,7 @@ atoms in each leaflets (if the ``--keep_atom`` option is used, default) or
 the index of all the atoms from reference atom residues (if the
 ``--keep_residue`` is used).
 
-Splitleafs has been tested with both python 2.7 and python 3.2.
+Splitleafs has been tested with python 2.6, 2.7, 3.2 and pypy.
 
 Options
 ~~~~~~~
@@ -36,7 +36,9 @@ Options
 --axis or -d:
     The axis normal to the membrane, ``z`` by default.
 --atom or -a:
-    The atom name of the reference, ``P1`` by default.
+    The atoms of reference. Several Several atoms can be given. The format for
+    one reference atom is ``residue_name:atom_name``, the residue name can be
+    omitted then the atom is mentioned by its atom name only.
 --keep_residue or -r:
     Write the whole residues in the index file.
 --keep_atom or -k:
@@ -67,6 +69,16 @@ use this bead as a reference for our splitting we can use the command ::
 
 Notice that, in this last example, we give a gro file to the program which will
 guess it is not a PDB file and read it with the right file format.
+
+If the membrane in the previous example is made of POPC lipids only, then the
+command is equivalent to ::
+
+    splitleafs.py --atom POPC:PO4 membrane_martini.gro > leaflets.ndx
+
+The ``--atom`` option can take several arguments. This can be useful in case of
+an heterogeneous membrane ::
+
+    splitleafs.py --atom POPC:PO4 CHOL:ROH membrane_martini.gro > leaflets.ndx
 
 You may need not only the phosphorus but also the whole lipid in the output
 index file. Then use the ``--keep_residue`` option ::

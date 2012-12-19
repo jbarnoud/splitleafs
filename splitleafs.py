@@ -349,6 +349,12 @@ def guess_format(infile):
     return input_format, mod_infile
 
 
+def reformat_selection(selection):
+    """
+    Generate a human readable string from an atom selection critera list.
+    """
+    return " ".join([":".join(criterion) for criterion in selection])
+
 def main():
     """
     Run everything from the command line.
@@ -386,9 +392,10 @@ def main():
                 return 1
         # Complain if the reference atom is absent
         except ZeroDivisionError:
-            print(("The reference atom looks absent from your input. Are you "
-                   "sure there is some {0} atoms in your system?")
-                  .format(args.atom), file=sys.stderr)
+            print(("There seems to be no atom corresponding to your reference "
+                   "selection. Are you sure this selection is present in your "
+                   "structure: '{0}'?")
+                  .format(reformat_selection(args.atom)), file=sys.stderr)
             return 1
     # Display the number of atoms per group
     for group_name, atomids in groups.items():

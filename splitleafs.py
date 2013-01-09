@@ -107,6 +107,31 @@ def parse_selection(selection):
     return tuple(selection.split(':'))
 
 
+def stop_at_empty_line(iterator):
+    """
+    Yield all item of an iterator but stop when the item is an empty line.
+
+    An empty line is a string which is empty when stripped.
+    """
+    for line in iterator:
+        if line.strip() == "":
+            return
+        yield line
+
+
+def except_last(iterator):
+    """
+    Yield all elements of an iterator but the last one.
+
+    :Parameters:
+        - iterator: the iterator on which to iterate
+    """
+    previous = next(iterator)
+    for line in iterator:
+        yield previous
+        previous = line
+
+
 def read_gro(lines):
     """
     Read the atoms from a gro file.
@@ -122,7 +147,14 @@ def read_gro(lines):
     :Raise:
         - FormatError: raised if the file format does not fit.
     """
-    for line in lines:
+    # "lines" might be a list and not a proper iterator
+    lines = iter(lines)
+    # The two first lines are a header
+    next(lines)
+    next(lines)
+    # Loop over the lines, stop before an empty line and ignore the last
+    # non empty line since it describes the box
+    for line in except_last(stop_at_empty_line(lines)):
         try:
             atom = dict(((key, convert(line[begin:end].strip()))
                         for key, ((begin, end), convert)
@@ -289,7 +321,7 @@ def split_leaflets(infile, axis, selection, res=False, input_format="gro"):
     """
     axis = axis.lower()
     if input_format == "gro":
-        atoms = list(read_gro(list(infile)[2:-1]))
+        atoms = list(read_gro(infile))
     else:
         atoms = list(read_pdb(infile))
     selected = list(select_atoms(atoms, selection))
@@ -354,6 +386,7 @@ def reformat_selection(selection):
     Generate a human readable string from an atom selection critera list.
     """
     return " ".join([":".join(criterion) for criterion in selection])
+
 
 def main():
     """

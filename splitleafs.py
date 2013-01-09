@@ -220,9 +220,8 @@ def select_atoms(atoms, selection):
         - selection: an atom selection as described in ``parse_selection``
     """
     for atom in atoms:
-        for atom_type in selection:
-            if is_selected(atom, selection):
-                yield atom
+        if is_selected(atom, selection):
+            yield atom
 
 
 def axis_coordinates(atoms, axis):

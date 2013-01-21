@@ -19,6 +19,7 @@ Test suite for splitleafs.
 
 from __future__ import print_function
 from unittest import TestCase, main
+import itertools
 import os
 import splitleafs
 import subprocess
@@ -166,6 +167,23 @@ class TestProgram(TestCase):
             for line in err:
                 print(line)
         self.assertNotEqual(status, 0, "The program should have crash.")
+
+    def test_begin_extra_lines(self):
+        """
+        There should not be anything befole the first group header.
+        """
+        with open("test_output.ndx", "w") as out:
+            with open("test_error.txt", "w") as err:
+                subprocess.call(["./splitleafs.py",
+                                 "test_resources/membrane.gro"],
+                                stdout=out, stderr=err)
+        with open("test_output.ndx") as exec_out:
+            extra_lines = 0
+            for line in itertools.takewhile(lambda x: "[" not in x, exec_out):
+                extra_lines += 1
+        self.assertEqual(extra_lines, 0,
+                         ("There is {0} extra lines at the beginning of the "
+                          "standard output.".format(extra_lines)))
 
 
 def read_ndx(infile):

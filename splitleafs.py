@@ -324,7 +324,6 @@ def split_leaflets(infile, axis, selection, res=False, input_format="gro"):
     else:
         atoms = list(read_pdb(infile))
     selected = list(select_atoms(atoms, selection))
-    print(len(selected))
     coordinates = axis_coordinates(selected, axis)
     average = mean(coordinates)
     if res:

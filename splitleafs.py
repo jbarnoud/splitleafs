@@ -26,6 +26,10 @@ import os
 
 __author__ = "Jonathan Barnoud"
 
+# File format description. The key is the name of the field, the value is a
+# tuple from which the first element is the first (included) and last
+# (excluded) indices of the field in the line, and the second element the type
+# of the field content.
 GRO_FIELDS = {
     "resid": ((0, 5), int),
     "resname": ((5, 10), str),
@@ -46,6 +50,7 @@ PDB_FIELDS = {
     "z": ((46, 54), float),
 }
 
+# All the authorized values for the first field of a line in a PDB file
 PDB_SECTIONS = (
     "HEADER", "OBSLTE", "TITLE", "SPLT", "CAVEAT", "COMPND", "SOURCE",
     "KEYWDS", "EXPDTA", "NUMMDL", "MDLTYP", "AUTHOR", "REVDAT", "SPRSDE",

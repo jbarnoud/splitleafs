@@ -60,6 +60,9 @@ PDB_SECTIONS = (
     "ATOM", "ANISOU", "TER", "HETATM", "ENDMDL", "CONECT", "MASTER", "END",
     "ENDMOL",
 )
+# MTRIX, ORIGX and SCALE pdb sections can be followed be a random
+# number so they need to be looked at separately
+PDB_SHORT_SECTION = ("MTRIX", "ORIGX", "SCALE")
 
 
 class FormatError(Exception):
@@ -82,6 +85,15 @@ def isfile(path):
             msg = "{0} does not exist.".format(path)
         raise argparse.ArgumentTypeError(msg)
     return path
+
+
+def valid_pdb_line(line):
+    if not (line[0:6].strip() in PDB_SECTIONS or line.strip() == ""):
+        # MTRIX, ORIGX and SCALE pdb sections can be followed be a random
+        # number so they will trigger the previous test
+        if not line[0:4] in PDB_SHORT_SECTION:
+            raise FormatError('PDB line should not start with "{0}"'
+                              .format(line[0:6]))
 
 
 def parse_selection(selection):
@@ -184,12 +196,7 @@ def read_pdb(lines):
     """
     for line in lines:
         # Test if the line starts as it should in a PDB file
-        if not (line[0:6].strip() in PDB_SECTIONS or line.strip() == ""):
-            # MTRIX, ORIGX and SCALE pdb sections can be followed be a random
-            # number so they will trigger the previous test
-            if not line[0:4] in ("MTRIX", "ORIGX", "SCALE"):
-                raise FormatError('PDB line should not start with "{0}"'
-                                  .format(line[0:6]))
+        valid_pdb_line(line)
         if line[0:6] == "ATOM  ":
             try:
                 atom = dict(((key, convert(line[begin:end].strip()))
@@ -374,13 +381,22 @@ def guess_format(infile):
 
     Return the format and an iterator that mimic the input file.
     """
-    first_line = infile.readline()
-    if (first_line[0:6].strip() in PDB_SECTIONS
-            or first_line[0:5] in ("MTRIX", "ORIGX", "SCALE")):
-        input_format = "pdb"
-    else:
+    readed_lines = []
+    # Empty lines are not informative, let's go to the first not empty line
+    line = infile.readline()
+    while len(line) >= 1 and line.strip() == "":
+        readed_lines.append(line)
+        line = infile.readline()
+    readed_lines.append(line)
+    # Check if the line could be from a PDB file, if not we probably are
+    # reading a gro file
+    try:
+        valid_pdb_line(line)
+    except FormatError:
         input_format = "gro"
-    mod_infile = itertools.chain([first_line], infile)
+    else:
+        input_format = "pdb"
+    mod_infile = itertools.chain(readed_lines, infile)
     return input_format, mod_infile
 
 

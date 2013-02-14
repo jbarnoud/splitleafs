@@ -436,7 +436,7 @@ def main():
         except FormatError:
             if (args.format == "auto"):
                 print("Error while reading the input. Are you sure your file "
-                      "is in the pdb/gro format?", file=sys.stderr)
+                      "is in the pdb or gro format?", file=sys.stderr)
             else:
                 print(("Error while reading the input. Are you sure your file "
                        "is in the {0} format?").format(args.format),

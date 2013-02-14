@@ -388,7 +388,7 @@ def guess_format(infile):
         readed_lines.append(line)
         line = infile.readline()
     readed_lines.append(line)
-    
+
     # If the file is empty it is not worth continuing
     if not line:
         return 'empty', []

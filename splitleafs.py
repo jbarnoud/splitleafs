@@ -388,6 +388,11 @@ def guess_format(infile):
         readed_lines.append(line)
         line = infile.readline()
     readed_lines.append(line)
+    
+    # If the file is empty it is not worth continuing
+    if not line:
+        return 'empty', []
+
     # Check if the line could be from a PDB file, if not we probably are
     # reading a gro file
     try:
@@ -428,6 +433,10 @@ def main():
         else:
             input_format = args.format
             mod_infile = infile
+        # Complain if the file is known to be empty
+        if input_format == 'empty':
+            print("The file is empty!", file=sys.stderr)
+            return 1
         # Do the work
         try:
             groups = split_leaflets(mod_infile, args.axis, args.atom,

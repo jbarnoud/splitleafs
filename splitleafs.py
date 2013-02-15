@@ -381,13 +381,13 @@ def guess_format(infile):
 
     Return the format and an iterator that mimic the input file.
     """
-    readed_lines = []
+    read_lines = []
     # Empty lines are not informative, let's go to the first not empty line
     line = infile.readline()
     while len(line) >= 1 and line.strip() == "":
         readed_lines.append(line)
         line = infile.readline()
-    readed_lines.append(line)
+    read_lines.append(line)
 
     # If the file is empty it is not worth continuing
     if not line:
@@ -401,7 +401,7 @@ def guess_format(infile):
         input_format = "gro"
     else:
         input_format = "pdb"
-    mod_infile = itertools.chain(readed_lines, infile)
+    mod_infile = itertools.chain(read_lines, infile)
     return input_format, mod_infile
 
 

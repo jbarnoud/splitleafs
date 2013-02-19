@@ -88,6 +88,9 @@ def isfile(path):
 
 
 def valid_pdb_line(line):
+    """
+    Raise a FormatError if the given line does not start like a valid PDB line
+    """
     if not (line[0:6].strip() in PDB_SECTIONS or line.strip() == ""):
         # MTRIX, ORIGX and SCALE pdb sections can be followed be a random
         # number so they will trigger the previous test
@@ -385,7 +388,7 @@ def guess_format(infile):
     # Empty lines are not informative, let's go to the first not empty line
     line = infile.readline()
     while len(line) >= 1 and line.strip() == "":
-        readed_lines.append(line)
+        read_lines.append(line)
         line = infile.readline()
     read_lines.append(line)
 

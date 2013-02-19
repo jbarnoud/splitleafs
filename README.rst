@@ -28,7 +28,9 @@ atoms in each leaflets (if the ``--keep_atom`` option is used, default) or
 the index of all the atoms from reference atom residues (if the
 ``--keep_residue`` is used).
 
-Splitleafs has been tested with python 2.6, 2.7, 3.2 and pypy.
+Splitleafs is tested with python 2.6, 2.7, 3.2, 3.3, and pypy using Travis CI.
+Please see <https://travis-ci.org/jbarnoud/splitleafs> for the test status on
+splitleafs's current version.
 
 Options
 ~~~~~~~

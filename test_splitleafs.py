@@ -179,7 +179,7 @@ class TestProgram(TestCase):
                                 stdout=out, stderr=err)
         with open("test_output.ndx") as exec_out:
             extra_lines = 0
-            for line in itertools.takewhile(lambda x: "[" not in x, exec_out):
+            for _ in itertools.takewhile(lambda x: "[" not in x, exec_out):
                 extra_lines += 1
         self.assertEqual(extra_lines, 0,
                          ("There is {0} extra lines at the beginning of the "

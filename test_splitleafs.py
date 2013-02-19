@@ -69,7 +69,8 @@ class TestLibrary(TestCase):
         # Split the bilayer
         path = os.path.join(REFDIR, "membrane.gro")
         axis = "z"
-        atoms = list(splitleafs.read_gro(open(path).readlines()[2:-1]))
+        with open(path) as infile:
+            atoms = list(splitleafs.read_gro(infile.readlines()[2:-1]))
         selection = list(splitleafs.select_atoms(atoms, [("P1",)]))
         coordinates = splitleafs.axis_coordinates(selection, axis)
         average = splitleafs.mean(coordinates)

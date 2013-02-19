@@ -118,6 +118,10 @@ class TestProgram(TestCase):
         """
         Launch the program and keep residues.
         """
+        # This nested with statements are kept for compatibility with
+        # python 2.6 otherwise it could be written
+        # with open("test_output.ndx", "w") as out, \
+        #      open("test_error.txt", "w") as err:
         with open("test_output.ndx", "w") as out:
             with open("test_error.txt", "w") as err:
                 status = subprocess.call(["./splitleafs.py",
@@ -138,6 +142,8 @@ class TestProgram(TestCase):
         """
         Launch the program and do not keep residues.
         """
+        # This nested with statements are kept for compatibility with
+        # python 2.6
         with open("test_output.ndx", "w") as out:
             with open("test_error.txt", "w") as err:
                 status = subprocess.call(["./splitleafs.py",
@@ -158,6 +164,8 @@ class TestProgram(TestCase):
         """
         Test that the test suit actually catch crashes.
         """
+        # This nested with statements are kept for compatibility with
+        # python 2.6
         with open("test_output.ndx", "w") as out:
             with open("test_error.txt", "w") as err:
                 status = subprocess.call(["./splitleafs.py",
@@ -172,6 +180,8 @@ class TestProgram(TestCase):
         """
         There should not be anything befole the first group header.
         """
+        # This nested with statements are kept for compatibility with
+        # python 2.6
         with open("test_output.ndx", "w") as out:
             with open("test_error.txt", "w") as err:
                 subprocess.call(["./splitleafs.py",

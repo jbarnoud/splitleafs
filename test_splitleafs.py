@@ -21,10 +21,12 @@ Test suite for splitleafs.
 
 from __future__ import print_function
 from unittest import TestCase, main
+import contextlib
 import itertools
 import os
 import splitleafs
 import subprocess
+import sys
 
 __author__ = "Jonathan Barnoud"
 
@@ -111,6 +113,20 @@ class TestLibrary(TestCase):
                              ("The {0} group is different between the "
                               "function output and the reference.")
                              .format(key))
+
+    def test_keep_options(self):
+        """
+        Test that the program complains if both -r and -k are used.
+        """
+        with _redirect_stderr(sys.stdout):
+            # With both -r and -k the function should crash
+            argv = ["-r", "-k", "{0}/membrane.gro".format(REFDIR)]
+            self.assertRaises(SystemExit, splitleafs.get_options, *[argv])
+            # With only -r or -k it should not crash
+            argv = ["-r", "{0}/membrane.gro".format(REFDIR)]
+            splitleafs.get_options(argv)
+            argv = ["-k", "{0}/membrane.gro".format(REFDIR)]
+            splitleafs.get_options(argv)
 
 
 class TestProgram(TestCase):
@@ -227,6 +243,32 @@ def read_ndx(infile):
         elif not current_group is None:
             indices[current_group] += [int(i) for i in line.split()]
     return indices
+
+
+@contextlib.contextmanager
+def _redirect_stderr(destination=sys.stdout):
+    """
+    Redirect sys.stderr to an other file descriptor (sys.stdout by default).
+
+    This function is a context manager and is used like as followed::
+
+        >>> with _redirect_stderr():
+        ...     print >> sys.stderr, "Something"
+
+    In this example the print is done in sys.stdout even if sys.stderr is
+    explicitly mentioned.
+
+    Stderr can also be redirected to a file descriptor::
+
+        >>> with open("my_file", "wt") as outfile:
+        ...     with _redirect_stderr(outfile):
+        ...         print >> sys.stderr, "Something"
+
+    """
+    old_stderr = sys.stderr
+    sys.stderr = destination
+    yield
+    sys.stderr = old_stderr
 
 
 if __name__ == "__main__":

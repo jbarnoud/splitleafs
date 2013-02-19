@@ -366,10 +366,11 @@ def get_options(argv):
     parser.add_argument("--format", "-f", type=str,
                         default="auto", choices=["gro", "pdb", "auto"],
                         help="Input file format.")
-    parser.add_argument("--keep_residue", "-r", action="store_true",
+    keep_options = parser.add_mutually_exclusive_group()
+    keep_options.add_argument("--keep_residue", "-r", action="store_true",
                         dest="keep_residue", default=False,
                         help="Keep the whole residues.")
-    parser.add_argument("--keep_atom", "-k", action="store_false",
+    keep_options.add_argument("--keep_atom", "-k", action="store_false",
                         dest="keep_residue", default=False,
                         help="Keep only the atom of reference.")
     args = parser.parse_args(argv)

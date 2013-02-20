@@ -52,7 +52,7 @@ class TestLibrary(TestCase):
              "x":6.0, "y":7.0, "z":-8.0},
         ]
         with open(path) as infile:
-            atoms = splitleafs.read_gro(infile.readlines()[2:-1])
+            atoms = list(splitleafs.read_gro(infile))
         for ref, atom in zip(reference, atoms):
             for key, value in ref.items():
                 if not key in "xyz":
@@ -74,7 +74,7 @@ class TestLibrary(TestCase):
         path = os.path.join(REFDIR, "membrane.gro")
         axis = "z"
         with open(path) as infile:
-            atoms = list(splitleafs.read_gro(infile.readlines()[2:-1]))
+            atoms = list(splitleafs.read_gro(infile))
         selection = list(splitleafs.select_atoms(atoms, [("P1",)]))
         coordinates = splitleafs.axis_coordinates(selection, axis)
         average = splitleafs.mean(coordinates)
@@ -123,7 +123,7 @@ class TestLibrary(TestCase):
         axis = "z"
         select_code = [("POPC", "P1"), ("POPC", "C12")]
         with open(path) as infile:
-            atoms = list(splitleafs.read_gro(infile.readlines()[2:-1]))
+            atoms = list(splitleafs.read_gro(infile))
         print(len(atoms))
         selection = list(splitleafs.select_atoms(atoms, select_code))
         print(len(selection))

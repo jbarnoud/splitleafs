@@ -67,7 +67,7 @@ the `Martini coarse-grained force field <http://md.chem.rug.nl/cgmartini/>`_.
 Then the phospate group is represented by a bead called ``PO4``. If we want to
 use this bead as a reference for our splitting we can use the command ::
 
-    splitleafs.py --atom PO4 membrane_martini.gro > leaflets.ndx
+    splitleafs.py --atom PO4 -- membrane_martini.gro > leaflets.ndx
 
 Notice that, in this last example, we give a gro file to the program which will
 guess it is not a PDB file and read it with the right file format.
@@ -75,17 +75,17 @@ guess it is not a PDB file and read it with the right file format.
 If the membrane in the previous example is made of POPC lipids only, then the
 command is equivalent to ::
 
-    splitleafs.py --atom POPC:PO4 membrane_martini.gro > leaflets.ndx
+    splitleafs.py --atom POPC:PO4 -- membrane_martini.gro > leaflets.ndx
 
 The ``--atom`` option can take several arguments. This can be useful in case of
 an heterogeneous membrane ::
 
-    splitleafs.py --atom POPC:PO4 CHOL:ROH membrane_martini.gro > leaflets.ndx
+    splitleafs.py --atom POPC:PO4 CHOL:ROH -- membrane_martini.gro > leaflets.ndx
 
 You may need not only the phosphorus but also the whole lipid in the output
 index file. Then use the ``--keep-residue`` option ::
 
-    splitleafs.py --atom PO4 membrane_martini.gro --keep-residue > leaflets.ndx
+    splitleafs.py --atom PO4 -- membrane_martini.gro --keep-residue > leaflets.ndx
 
 In the current version, only the residue that contains the reference atom is
 selected. This means that if your molecules are composed of more than one

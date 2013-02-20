@@ -122,9 +122,15 @@ You may get a wrong result if your membrane cross the periodic box in its
 normal dimension.
 
 Multi-residue molecules are not supported yet. Keeping only the reference atoms
-(``--keep-atom`` or ``-k`` option) will work but the program does not allow to
-keep the entire molecule. If the ``--keep-residue`` (or ``-r``) option is used,
+(``--keep_atom`` or ``-k`` option) will work but the program does not allow to
+keep the entire molecule. If the ``--keep_residue`` (or ``-r``) option is used,
 then only the residues that contain the reference atoms will be kept.
+
+If several reference atoms belong to the same residue, then the leaflet of the
+residue if defined by the first reference atom read in the input file. All the
+reference atoms are however used for the geometric center calculation. If the
+``--keep_atom`` (or ``-k``) option is used, then the group for each reference
+atom is decided separately.
 
 
 License

@@ -302,7 +302,7 @@ def split_get_res(atoms, average, axis, selection):
             keep_res = None
         current_res_atoms.append(atom["atomid"])
         # Split the residues of interest
-        if is_selected(atom, selection):
+        if is_selected(atom, selection) and not keep_res:
             keep_res = atom["resid"]
             # Choose the group
             if atom[axis] >= average:

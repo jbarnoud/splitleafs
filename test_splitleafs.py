@@ -114,6 +114,36 @@ class TestLibrary(TestCase):
                               "function output and the reference.")
                              .format(key))
 
+    def test_multiple_references(self):
+        """
+        Test if it works with several reference atoms in the same residue.
+        """
+        # Split the bilayer using POPC:P1 and POPC:C12 as reference atoms
+        path = os.path.join(REFDIR, "membrane.gro")
+        axis = "z"
+        select_code = [("POPC", "P1"), ("POPC", "C12")]
+        with open(path) as infile:
+            atoms = list(splitleafs.read_gro(infile.readlines()[2:-1]))
+        print(len(atoms))
+        selection = list(splitleafs.select_atoms(atoms, select_code))
+        print(len(selection))
+        coordinates = splitleafs.axis_coordinates(selection, axis)
+        average = splitleafs.mean(coordinates)
+        groups = splitleafs.split_get_res(atoms, average, axis, select_code)
+
+        # The resulting groups should be the exact same as the one from the
+        # reference output built with just POPC:P1 as reference atom
+        ndx_reference = os.path.join(REFDIR, "leafs.ndx")
+        with open(ndx_reference) as infile:
+            reference = read_ndx(infile)
+        for key, value in reference.items():
+            self.assertEqual(value, groups[key],
+                             ("The {0} group is different between the "
+                              "function output and the reference.")
+                             .format(key))
+
+
+
     def test_keep_options(self):
         """
         Test that the program complains if both -r and -k are used.

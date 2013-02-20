@@ -24,9 +24,9 @@ format. The format is guessed from the content of the file Use the
 The program writes a gromacs index file (.ndx file) on the standard output. The
 index file will contain two groups called ``lower_leaflet`` and
 ``upper_leaflet`` respectively. The groups contain the index of the reference
-atoms in each leaflets (if the ``--keep_atom`` option is used, default) or
+atoms in each leaflets (if the ``--keep-atom`` option is used, default) or
 the index of all the atoms from reference atom residues (if the
-``--keep_residue`` is used).
+``--keep-residue`` is used).
 
 Splitleafs is tested with python 2.6, 2.7, 3.2, 3.3, and pypy using Travis CI.
 Please see <https://travis-ci.org/jbarnoud/splitleafs> for the test status on
@@ -41,9 +41,9 @@ Options
     The atoms of reference. Several Several atoms can be given. The format for
     one reference atom is ``residue_name:atom_name``, the residue name can be
     omitted then the atom is mentioned by its atom name only.
---keep_residue or -r:
+--keep-residue or -r:
     Write the whole residues in the index file.
---keep_atom or -k:
+--keep-atom or -k:
     Write only the atoms of reference in the index file (default).
 --format or -f:
     The input file format. Gromacs gro files and PDB files are supported.
@@ -83,9 +83,9 @@ an heterogeneous membrane ::
     splitleafs.py --atom POPC:PO4 CHOL:ROH membrane_martini.gro > leaflets.ndx
 
 You may need not only the phosphorus but also the whole lipid in the output
-index file. Then use the ``--keep_residue`` option ::
+index file. Then use the ``--keep-residue`` option ::
 
-    splitleafs.py --atom PO4 membrane_martini.gro --keep_residue > leaflets.ndx
+    splitleafs.py --atom PO4 membrane_martini.gro --keep-residue > leaflets.ndx
 
 In the current version, only the residue that contains the reference atom is
 selected. This means that if your molecules are composed of more than one
@@ -122,14 +122,14 @@ You may get a wrong result if your membrane cross the periodic box in its
 normal dimension.
 
 Multi-residue molecules are not supported yet. Keeping only the reference atoms
-(``--keep_atom`` or ``-k`` option) will work but the program does not allow to
-keep the entire molecule. If the ``--keep_residue`` (or ``-r``) option is used,
+(``--keep-atom`` or ``-k`` option) will work but the program does not allow to
+keep the entire molecule. If the ``--keep-residue`` (or ``-r``) option is used,
 then only the residues that contain the reference atoms will be kept.
 
 If several reference atoms belong to the same residue, then the leaflet of the
 residue if defined by the first reference atom read in the input file. All the
 reference atoms are however used for the geometric center calculation. If the
-``--keep_atom`` (or ``-k``) option is used, then the group for each reference
+``--keep-atom`` (or ``-k``) option is used, then the group for each reference
 atom is decided separately.
 
 

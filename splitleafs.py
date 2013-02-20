@@ -367,10 +367,10 @@ def get_options(argv):
                         default="auto", choices=["gro", "pdb", "auto"],
                         help="Input file format.")
     keep_options = parser.add_mutually_exclusive_group()
-    keep_options.add_argument("--keep_residue", "-r", action="store_true",
+    keep_options.add_argument("--keep-residue", "-r", action="store_true",
                               dest="keep_residue", default=False,
                               help="Keep the whole residues.")
-    keep_options.add_argument("--keep_atom", "-k", action="store_false",
+    keep_options.add_argument("--keep-atom", "-k", action="store_false",
                               dest="keep_residue", default=False,
                               help="Keep only the atom of reference.")
     args = parser.parse_args(argv)

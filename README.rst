@@ -101,6 +101,31 @@ can see them even if you redirect the output of the program in a file ::
     upper_leaflet: 144 atoms
     The membrane is symmetric.
 
+Principle
+---------
+
+In order to split the membrane, splitleafs calculate the geometric center of
+the ensemble of reference atoms. The reference atoms above this geometric
+center on the membrane normal are assumed to be part of the upper leaflet, the
+others are part of the lower leaflet. If the whole residues are kept in the
+output, then a residue is assumed to be part of the same leaflet as its
+reference atom.
+
+Limitations
+-----------
+
+Because of the algorithm used to split the membrane, splitleafs does not work
+on curved or undulated membrane if the geometric center of the reference atoms
+is not in between the leaflets. Splitleafs does not work neither on vesicles.
+
+You may get a wrong result if your membrane cross the periodic box in its
+normal dimension.
+
+Multi-residue molecules are not supported yet. Keeping only the reference atoms
+(``--keep-atom`` or ``-k`` option) will work but the program does not allow to
+keep the entire molecule. If the ``--keep-residue`` (or ``-r``) option is used,
+then only the residues that contain the reference atoms will be kept.
+
 
 License
 -------

@@ -227,7 +227,7 @@ class TestProgram(TestCase):
 
     def test_begin_extra_lines(self):
         """
-        There should not be anything befole the first group header.
+        There should not be anything before the first group header.
         """
         # This nested with statements are kept for compatibility with
         # python 2.6

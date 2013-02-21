@@ -387,10 +387,10 @@ def guess_format(infile):
     """
     read_lines = []
     # Empty lines are not informative, let's go to the first not empty line
-    line = infile.readline()
+    line = next(infile)
     while len(line) >= 1 and line.strip() == "":
         read_lines.append(line)
-        line = infile.readline()
+        line = next(infile)
     read_lines.append(line)
 
     # If the file is empty it is not worth continuing

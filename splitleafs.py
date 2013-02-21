@@ -422,6 +422,7 @@ def main():
     """
     args = get_options(sys.argv[1:])
     if args.input is None:
+        print("Read input from the standard input.", file=sys.stderr)
         infile = sys.stdin
     else:
         try:

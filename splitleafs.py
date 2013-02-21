@@ -329,15 +329,12 @@ def write_ndx(groups):
         print("\n".join(textwrap.wrap(group_str, 80)))
 
 
-def split_leaflets(infile, axis, selection, res=False, input_format="gro"):
+def split_leaflets(infile, axis, selection, file_reader, res=False):
     """
     Split bilayer leaflets from a gromacs gro file along the given axis.
     """
     axis = axis.lower()
-    if input_format == "gro":
-        atoms = list(read_gro(infile))
-    else:
-        atoms = list(read_pdb(infile))
+    atoms = list(file_reader(infile))
     selected = list(select_atoms(atoms, selection))
     coordinates = axis_coordinates(selected, axis)
     average = mean(coordinates)
@@ -442,10 +439,12 @@ def main():
         if input_format == 'empty':
             print("The file is empty!", file=sys.stderr)
             return 1
+        readers = {"gro": read_gro, "pdb": read_pdb}
+        file_reader = readers[input_format]
         # Do the work
         try:
             groups = split_leaflets(mod_infile, args.axis, args.atom,
-                                    args.keep_residue, input_format)
+                                    file_reader, args.keep_residue)
         # Complain if the format is wrong
         except FormatError:
             if (args.format == "auto"):

@@ -354,7 +354,7 @@ def get_options(argv):
     Read the command line arguments.
     """
     usage = ("%(prog)s [options] < input > output.ndx\n"
-             "       %(prog)s [options] input > output.ndx")
+             "       %(prog)s [options] -- input > output.ndx")
     parser = argparse.ArgumentParser(description=__doc__, usage=usage)
     parser.add_argument("input", default=None, nargs='?', type=isfile,
                         help="The input structure.")

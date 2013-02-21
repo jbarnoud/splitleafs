@@ -13,7 +13,7 @@ Usage
 ::
 
     splitleafs.py [options] < input > output.ndx
-    splitleafs.py [options] input > output.ndx
+    splitleafs.py [options] -- input > output.ndx
 
 
 If an input file if given as an argument then this file will be read; else the
@@ -85,7 +85,7 @@ an heterogeneous membrane ::
 You may need not only the phosphorus but also the whole lipid in the output
 index file. Then use the ``--keep-residue`` option ::
 
-    splitleafs.py --atom PO4 -- membrane_martini.gro --keep-residue > leaflets.ndx
+    splitleafs.py --atom PO4 --keep-residue membrane_martini.gro > leaflets.ndx
 
 In the current version, only the residue that contains the reference atom is
 selected. This means that if your molecules are composed of more than one

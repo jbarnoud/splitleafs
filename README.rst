@@ -143,11 +143,13 @@ The program is distributed with a test suite that can be run by calling the
 test_splitleafs.py script. The nosetests python module is not requires but would improve the readability of the output. The nosetests modula can be installed by:
 
 ::
+
     pip install nose
 
 Then the tests can be run with:
 
 ::
+
     nosetest
 
 License

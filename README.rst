@@ -132,6 +132,23 @@ reference atoms are however used for the geometric center calculation. If the
 ``--keep-atom`` (or ``-k``) option is used, then the group for each reference
 atom is decided separately.
 
+Contribute
+----------
+
+Splitleafs last version is available on `github
+<https://github.com/jbarnoud/splitleafs>`_ where you can also report issues
+and do pull requests.
+
+The program is distributed with a test suite that can be run by calling the
+test_splitleafs.py script. The nosetests python module is not requires but would improve the readability of the output. The nosetests modula can be installed by:
+
+::
+    pip install nose
+
+Then the tests can be run with:
+
+::
+    nosetest
 
 License
 -------

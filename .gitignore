@@ -11,3 +11,4 @@ test_error.txt
 # coverage stuff
 .coverage
 htmlcov/
+cover/

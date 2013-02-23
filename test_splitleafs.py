@@ -142,8 +142,6 @@ class TestLibrary(TestCase):
                               "function output and the reference.")
                              .format(key))
 
-
-
     def test_keep_options(self):
         """
         Test that the program complains if both -r and -k are used.
@@ -157,6 +155,21 @@ class TestLibrary(TestCase):
             splitleafs.get_options(argv)
             argv = ["-k", "{0}/membrane.gro".format(REFDIR)]
             splitleafs.get_options(argv)
+
+    def test_format_guess(self):
+        """
+        Is the format guess correct?
+        """
+        test_files = {"membrane.gro": "gro",
+                      "membrane.pdb": "pdb",
+                      "empty.txt": "empty",
+                      }
+        for file_name, file_format in test_files.items():
+            with open(os.path.join(REFDIR, file_name)) as doc:
+                guess, _ = splitleafs.guess_format(doc)
+            self.assertEqual(guess, file_format,
+                             "Format {0} guessed instead of {1} for {2}."
+                             .format(guess, file_format, file_name))
 
 
 class TestProgram(TestCase):

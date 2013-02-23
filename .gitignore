@@ -8,3 +8,6 @@ Session.vim
 # splitleafs stuff
 test_output.ndx
 test_error.txt
+# coverage stuff
+.coverage
+htmlcov/

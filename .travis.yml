@@ -14,7 +14,7 @@ install:
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install argparse --use-mirrors; fi"
 # command to run tests
 script:
-  - nosetests --with-coverage --cover-tests --cover-package=splitleafs,test_splitleafs
+  - nosetests --with-coverage --cover-package=splitleafs,test_splitleafs
 after_success:
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install python-coveralls --use-mirrors; fi"
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then coveralls; fi"

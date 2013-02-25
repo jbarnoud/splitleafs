@@ -15,4 +15,5 @@ install:
 # command to run tests
 script: nosetests --with-coverage --cover-tests --cover-package=splitleafs,test_splitleafs
 after_sucess:
-  - coveralls
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install python-coveralls --use-mirrors; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then coveralls; fi"

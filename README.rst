@@ -4,6 +4,9 @@ Splitleafs
 .. image:: https://travis-ci.org/jbarnoud/splitleafs.png?branch=master
    :alt: Travis-CI build status
    :target: https://travis-ci.org/jbarnoud/splitleafs
+.. image:: https://coveralls.io/repos/jbarnoud/splitleafs/badge.png?branch=master
+   :alt: Coveralls coverage statistics
+   :target: https://coveralls.io/r/jbarnoud/splitleafs
 
 This tool aims to split leaflets from a bilayer. It reads a GROMACS gro file or
 a PDB file and print an index file with one group per leaflet.

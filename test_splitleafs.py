@@ -21,6 +21,7 @@ Test suite for splitleafs.
 
 from __future__ import print_function
 from unittest import TestCase, main
+import argparse
 import contextlib
 import itertools
 import os
@@ -256,6 +257,23 @@ class TestProgram(TestCase):
         self.assertEqual(extra_lines, 0,
                          ("There is {0} extra lines at the beginning of the "
                           "standard output.".format(extra_lines)))
+
+    def test_isfile(self):
+        """
+        Test the is_file function.
+        """
+        # Does the function works when the file exists?
+        path = os.path.join(REFDIR, "membrane.pdb")
+        self.assertEqual(splitleafs.isfile(path), path,
+                         "is_file does not recognize an existing file.")
+        # Does the function crash as it should when it gets a directory?
+        path = os.path.join(REFDIR, "directory")
+        self.assertRaises(argparse.ArgumentTypeError, splitleafs.isfile,
+                          *[path])
+        # Does the function crash as it should when it gets a missing file?
+        path = os.path.join(REFDIR, "missing")
+        self.assertRaises(argparse.ArgumentTypeError, splitleafs.isfile,
+                          *[path])
 
 
 def read_ndx(infile):

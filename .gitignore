@@ -12,3 +12,5 @@ test_error.txt
 .coverage
 htmlcov/
 cover/
+# MacOS stuff
+.DS_store

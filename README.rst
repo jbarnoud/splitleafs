@@ -104,6 +104,21 @@ can see them even if you redirect the output of the program in a file ::
     upper_leaflet: 144 atoms
     The membrane is symmetric.
 
+Use as a python module
+----------------------
+
+Splitleafs is written in python and can be used as a python module. To use
+splitleafs this way, you need to have it in your PYTHONPATH or in your current
+directory. There is no proper installation procedure yet.
+
+>>> import splitleafs
+>>> with open('structure.gro') as infile
+...     groups = splitleafs.split_leaflets(infile, 'z',
+                                           [('DPPC','PO4'), ('DUPC', 'PO4')],
+                                           splitleafs.read_gro, False)
+>>> print groups.keys()
+('lower_leaflet', 'upper_leaflet')
+
 Principle
 ---------
 

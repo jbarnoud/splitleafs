@@ -342,7 +342,6 @@ def split_leaflets(infile, axis, selection, file_reader, res=False):
         groups = split_get_res(atoms, average, axis, selection)
     else:
         groups = split(selected, average, axis)
-    write_ndx(groups)
     return groups
 
 
@@ -462,6 +461,9 @@ def main():
                    "structure: '{0}'?")
                   .format(reformat_selection(args.atom)), file=sys.stderr)
             return 1
+        else:
+            write_ndx(groups)
+
     # Display the number of atoms per group
     for group_name, atomids in groups.items():
         print("{0}: {1} atoms".format(group_name, len(atomids)),

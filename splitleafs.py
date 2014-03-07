@@ -332,6 +332,22 @@ def write_ndx(groups):
 def split_leaflets(infile, axis, selection, file_reader, res=False):
     """
     Split bilayer leaflets from a gromacs gro file along the given axis.
+
+    :Parameters:
+        - infile: the input file describing the structure as a iterator over
+                  the structure file (gro or pdb format)
+        - axis: the dimension normal to the membrane plane (x, y, or z)
+        - selection: an atom selection list as outputed by ``parse_selection'',
+                     the selection is used to get the reference atoms
+        - file_reader: a callback to the function that will read the input
+                       (typically read_gro or read_pdb)
+        - res: a boolean, True if you want to keep whole residues in the output,
+               False by default
+
+    :Return:
+        - a dictionary, they keys are "upper_leaflet" and "lower_leaflet", the
+          values are lists of atom indices in each leaflet. The indices start
+          at 1!
     """
     axis = axis.lower()
     atoms = list(file_reader(infile))
@@ -342,7 +358,6 @@ def split_leaflets(infile, axis, selection, file_reader, res=False):
         groups = split_get_res(atoms, average, axis, selection)
     else:
         groups = split(selected, average, axis)
-    write_ndx(groups)
     return groups
 
 
@@ -462,6 +477,9 @@ def main():
                    "structure: '{0}'?")
                   .format(reformat_selection(args.atom)), file=sys.stderr)
             return 1
+        else:
+            write_ndx(groups)
+
     # Display the number of atoms per group
     for group_name, atomids in groups.items():
         print("{0}: {1} atoms".format(group_name, len(atomids)),

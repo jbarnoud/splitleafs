@@ -22,7 +22,7 @@ import sys
 from functools import partial
 
 from .structure import read, FormatError
-from .user import get_options, isfile
+from .user import get_options
 from .split import split_leaflets
 from .output import write_ndx
 

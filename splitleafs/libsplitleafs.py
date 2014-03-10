@@ -19,8 +19,9 @@ Write a GROMACS index file with one group per membrane leaflet.
 
 from __future__ import print_function, division, with_statement
 import sys
+from functools import partial
 
-from .structure import read_gro, read_pdb, guess_format, FormatError
+from .structure import read, FormatError
 from .user import get_options, isfile
 from .split import split_leaflets
 from .output import write_ndx
@@ -44,21 +45,10 @@ def main():
                   file=sys.stderr)
             return 1
     with infile:
-        # Guess the format
-        if args.format == "auto":
-            input_format, mod_infile = guess_format(infile)
-        else:
-            input_format = args.format
-            mod_infile = infile
-        # Complain if the file is known to be empty
-        if input_format == 'empty':
-            print("The file is empty!", file=sys.stderr)
-            return 1
-        readers = {"gro": read_gro, "pdb": read_pdb}
-        file_reader = readers[input_format]
+        file_reader = partial(read, file_format=args.format)
         # Do the work
         try:
-            groups = split_leaflets(mod_infile, args.axis, args.atom,
+            groups = split_leaflets(infile, args.axis, args.atom,
                                     file_reader, args.keep_residue)
         # Complain if the format is wrong
         except FormatError:

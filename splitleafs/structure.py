@@ -68,6 +68,13 @@ class FormatError(Exception):
     pass
 
 
+class EmptyFileError(Exception):
+    """
+    Exception raised when the input file is empty.
+    """
+    pass
+
+
 def stop_at_empty_line(iterator):
     """
     Yield all item of an iterator but stop when the item is an empty line.
@@ -195,3 +202,27 @@ def guess_format(infile):
     return input_format, mod_infile
 
 
+def read(infile, file_format="auto"):
+    """
+    Read a structure file in gro or pdb format. Output each atom as a
+    dictionary.
+
+    By default, the file_format argument is "auto" and the function guess the
+    file format. To force a given file_format, set the format argument to "gro"
+    or "pdb".
+    """
+    # Decide what read function to use. Guess the file format if needed.
+    readers = {"gro":read_gro, "pdb":read_pdb}
+    if file_format != "auto" and file_format not in readers.keys():
+        raise AttributeError('file_format values can only '
+                             'be "auto" or one in {}'.format(readers.keys()))
+    if file_format == "auto":
+        input_format, mod_infile = guess_format(infile)
+        if input_format == "empty":
+            raise EmptyFileError
+    else:
+        input_format = file_format
+
+    # Actually read the file
+    for atom in readers[input_format](mod_infile):
+        yield atom

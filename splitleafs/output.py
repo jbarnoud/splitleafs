@@ -19,6 +19,7 @@ Implement the split algorithms.
 
 from __future__ import print_function, division, with_statement
 import textwrap
+import sys
 
 __author__ = "Jonathan Barnoud"
 
@@ -32,3 +33,13 @@ def write_ndx(groups):
         group_str = " ".join([str(i) for i in atomids])
         print("\n".join(textwrap.wrap(group_str, 80)))
 
+
+def stats(groups, outfile=sys.stderr):
+    """
+    Display some statistics on the leaflets.
+    """
+    for group_name, atomids in groups.items():
+        print("{0}: {1} atoms".format(group_name, len(atomids)),
+              file=outfile)
+    if len(groups["upper_leaflet"]) == len(groups["lower_leaflet"]):
+        print("The membrane is symmetric.", file=outfile)

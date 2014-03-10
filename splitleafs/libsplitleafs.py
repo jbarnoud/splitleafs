@@ -24,7 +24,7 @@ from functools import partial
 from .structure import read, FormatError
 from .user import get_options
 from .split import split_leaflets
-from .output import write_ndx
+from .output import write_ndx, stats
 
 __author__ = "Jonathan Barnoud"
 
@@ -71,11 +71,7 @@ def main():
             write_ndx(groups)
 
     # Display the number of atoms per group
-    for group_name, atomids in groups.items():
-        print("{0}: {1} atoms".format(group_name, len(atomids)),
-              file=sys.stderr)
-    if len(groups["upper_leaflet"]) == len(groups["lower_leaflet"]):
-        print("The membrane is symmetric.", file=sys.stderr)
+    stats(groups)
 
     return 0
 

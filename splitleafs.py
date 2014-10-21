@@ -265,6 +265,19 @@ def mean(values):
     return summation / nelements
 
 
+def split_resid(atoms, average, axis):
+    """
+    Split the leaflets along the given axis and keep only the residue index
+    """
+    resid_groups = {"upper_leaflet": [], "lower_leaflet": []}
+    for atom in atoms:
+        if atom[axis] >= average:
+            resid_groups["upper_leaflet"].append(atom["resid"])
+        else:
+            resid_groups["lower_leaflet"].append(atom["resid"])
+    return resid_groups
+
+
 def split(atoms, average, axis):
     """
     Split the leaflets along the given axis.
@@ -329,7 +342,7 @@ def write_ndx(groups):
         print("\n".join(textwrap.wrap(group_str, 80)))
 
 
-def split_leaflets(infile, axis, selection, file_reader, res=False):
+def split_leaflets(infile, axis, selection, file_reader, res=False, get_resid=False):
     """
     Split bilayer leaflets from a gromacs gro file along the given axis.
 
@@ -358,7 +371,12 @@ def split_leaflets(infile, axis, selection, file_reader, res=False):
         groups = split_get_res(atoms, average, axis, selection)
     else:
         groups = split(selected, average, axis)
-    return groups
+
+    resid_groups = {}
+    if get_resid:
+        resid_groups = split_resid(selected, average, axis)
+
+    return (groups, resid_groups)
 
 
 def get_options(argv):
@@ -385,6 +403,10 @@ def get_options(argv):
     keep_options.add_argument("--keep-atom", "-k", action="store_false",
                               dest="keep_residue", default=False,
                               help="Keep only the atom of reference.")
+    parser.add_argument("--print-resid", "-i",  action="store_true",
+                        dest="get_resid",
+                        help="Print the residue indexes of each "
+                             "leaflet  at the end.")
     args = parser.parse_args(argv)
     return args
 
@@ -458,8 +480,10 @@ def main():
         file_reader = readers[input_format]
         # Do the work
         try:
-            groups = split_leaflets(mod_infile, args.axis, args.atom,
-                                    file_reader, args.keep_residue)
+            groups, resid_groups = split_leaflets(mod_infile, args.axis,
+                                                  args.atom, file_reader,
+                                                  args.keep_residue,
+                                                  args.get_resid)
         # Complain if the format is wrong
         except FormatError:
             if (args.format == "auto"):
@@ -486,6 +510,12 @@ def main():
               file=sys.stderr)
     if len(groups["upper_leaflet"]) == len(groups["lower_leaflet"]):
         print("The membrane is symmetric.", file=sys.stderr)
+    if args.get_resid:
+        for group_name, resids in resid_groups.items():
+            print("Residue indexes in the {0}".format(group_name),
+                  file=sys.stderr)
+            group_str = " ".join([str(i) for i in resids])
+            print("\n".join(textwrap.wrap(group_str, 80)), file=sys.stderr)
 
     return 0
 
